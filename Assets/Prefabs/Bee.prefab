@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: e49e35e52b45246ad9f5fcb2c5471940, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -121,6 +121,8 @@ MonoBehaviour:
   entityType: 2
   unitConfig: {fileID: 11400000, guid: f1bf63b01d4f640ab9e3e15000007c06, type: 2}
   targetTransform: {fileID: 0}
+  currentHealth: 0
+  isAlive: 1
   hoverHeight: 1.5
   hoverVariation: 0.5
   zigzagFrequency: 1.5

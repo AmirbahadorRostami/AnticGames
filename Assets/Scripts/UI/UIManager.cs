@@ -13,9 +13,8 @@ namespace TacticalGame.UI
     {
         [Header("Panels")]
         [SerializeField] private GameObject mainMenuPanel;
-        [SerializeField] private GameObject gameplayPanel;
         [SerializeField] private GameObject gameOverPanel;
-        [SerializeField] private GameObject pausePanel;
+        [SerializeField] private GameObject topPanel;
         
         [Header("Text Elements")]
         [SerializeField] private TextMeshProUGUI scoreText;
@@ -26,7 +25,6 @@ namespace TacticalGame.UI
         [SerializeField] private Button startButton;
         [SerializeField] private Button restartButton;
         [SerializeField] private Button resumeButton;
-        [SerializeField] private Button pauseButton;
         [SerializeField] private Button mainMenuButton;
         
         private GameEventManager eventManager;
@@ -58,8 +56,6 @@ namespace TacticalGame.UI
             if (resumeButton != null)
                 resumeButton.onClick.AddListener(OnResumeButtonClicked);
                 
-            if (pauseButton != null)
-                pauseButton.onClick.AddListener(OnPauseButtonClicked);
                 
             if (mainMenuButton != null)
                 mainMenuButton.onClick.AddListener(OnMainMenuButtonClicked);
@@ -83,17 +79,17 @@ namespace TacticalGame.UI
         
         private void HandleGameStart()
         {
-            ShowGameplay();
+            //ShowGameplay();
         }
         
         private void HandleGamePause()
         {
-            ShowPauseMenu();
+            //ShowPauseMenu();
         }
         
         private void HandleGameResume()
         {
-            ShowGameplay();
+            //ShowGameplay();
         }
         
         private void HandleGameOver(bool isWin)
@@ -119,16 +115,6 @@ namespace TacticalGame.UI
             SetActivePanels(mainMenuPanel);
         }
         
-        private void ShowGameplay()
-        {
-            SetActivePanels(gameplayPanel);
-        }
-        
-        private void ShowPauseMenu()
-        {
-            SetActivePanels(pausePanel);
-        }
-        
         private void ShowGameOverScreen(bool isWin)
         {
             if (gameOverMessageText != null)
@@ -148,9 +134,7 @@ namespace TacticalGame.UI
         {
             // Deactivate all panels
             if (mainMenuPanel != null) mainMenuPanel.SetActive(false);
-            if (gameplayPanel != null) gameplayPanel.SetActive(false);
             if (gameOverPanel != null) gameOverPanel.SetActive(false);
-            if (pausePanel != null) pausePanel.SetActive(false);
             
             // Activate the specified panel
             if (activePanel != null)
@@ -166,6 +150,7 @@ namespace TacticalGame.UI
             {
                 gameManager.StartGame();
             }
+            SetActivePanels(topPanel);
         }
         
         private void OnRestartButtonClicked()
@@ -184,16 +169,21 @@ namespace TacticalGame.UI
             }
         }
         
-        private void OnPauseButtonClicked()
+        //private void OnPauseButtonClicked()
+        //{
+        //    if (gameManager != null)
+        //    {
+        //        gameManager.PauseGame();
+        //    }
+        //}
+        
+        private void OnMainMenuButtonClicked()
         {
             if (gameManager != null)
             {
                 gameManager.PauseGame();
             }
-        }
-        
-        private void OnMainMenuButtonClicked()
-        {
+
             ShowMainMenu();
         }
     }
