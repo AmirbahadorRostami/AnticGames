@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7024406167320247683}
   - component: {fileID: 6383592260008322589}
   - component: {fileID: 350250559684161978}
-  - component: {fileID: 2321208977575204625}
+  - component: {fileID: -5060454328020259836}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -106,7 +106,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &2321208977575204625
+--- !u!114 &-5060454328020259836
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -115,13 +115,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 6767705181053299092}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 97c678453fcfb4aa58c53517e0629e0f, type: 3}
+  m_Script: {fileID: 11500000, guid: 160bf959f9f424262b3d3191c183f54b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   entityType: 3
   unitConfig: {fileID: 11400000, guid: 4eda88ef4fa6a4c349c8574bc64e3f11, type: 2}
   targetTransform: {fileID: 0}
-  searchRadius: 8
-  attackRange: 1
+  searchRadius: 10
+  attackRange: 1.5
   attackDamage: 50
-  attackCooldown: 0.5

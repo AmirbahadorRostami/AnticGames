@@ -18,11 +18,13 @@ namespace TacticalGame.Grid
 
         protected virtual void Start()
         {
+            Debug.Log($"[GridEntity] Start called for {name}, type: {entityType}");
             RegisterWithGrid();
         }
 
         protected virtual void OnDestroy()
         {
+            Debug.Log($"[GridEntity] OnDestroy called for {name}, type: {entityType}");
             UnregisterFromGrid();
         }
 
@@ -40,15 +42,23 @@ namespace TacticalGame.Grid
         /// </summary>
         public virtual void RegisterWithGrid()
         {
+            // Prevent double registration
+            if (isRegistered)
+            {
+                Debug.LogWarning($"[GridEntity] {name} already registered with grid. Skipping registration.");
+                return;
+            }
+            
             if (GridManager.Instance != null)
             {
+                Debug.Log($"[GridEntity] Registering {name} with grid, type: {entityType}, position: {transform.position}");
                 GridManager.Instance.RegisterEntity(this);
                 lastRegisteredPosition = transform.position;
                 isRegistered = true;
             }
             else
             {
-                Debug.LogError($"GridManager not found! Cannot register entity {name}.");
+                Debug.LogError($"[GridEntity] GridManager not found! Cannot register entity {name}.");
             }
         }
 
@@ -59,6 +69,7 @@ namespace TacticalGame.Grid
         {
             if (GridManager.Instance != null && isRegistered)
             {
+                Debug.Log($"[GridEntity] Unregistering {name} from grid, type: {entityType}");
                 GridManager.Instance.UnregisterEntity(this);
                 isRegistered = false;
             }

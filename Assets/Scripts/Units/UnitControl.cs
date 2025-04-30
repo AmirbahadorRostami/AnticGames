@@ -19,6 +19,18 @@ namespace TacticalGame.Units
                 movementStrategy.SetTarget(targetTransform.position);
             }
         }
+        
+        /// <summary>
+        /// Change the unit's target using a Vector3 position.
+        /// </summary>
+        public virtual void SetTarget(Vector3 targetPosition)
+        {
+            // Since the movement strategy can directly use positions, we can bypass the Transform
+            if (movementStrategy != null)
+            {
+                movementStrategy.SetTarget(targetPosition);
+            }
+        }
 
         /// <summary>
         /// Change the unit's movement speed.

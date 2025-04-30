@@ -54,7 +54,7 @@ MonoBehaviour:
   aphidSpawnWeight: 30
   beeSpawnWeight: 10
   enemySpeed: 5
-  enemySearchRadius: 8
+  enemySearchRadius: 25
   enemyCooldown: 0.5
   enemySpeedByDifficulty:
     serializedVersion: 2

@@ -16,23 +16,26 @@ namespace TacticalGame.Units
 
         protected override void Start()
         {
-            base.Start();
+            Debug.Log($"[Flag] Start called for {name}");
             
             eventManager = GameEventManager.Instance;
             
-            // The flag doesn't move, so we can register it once
-            RegisterWithGrid();
+            // Call base Start which handles grid registration
+            base.Start();
+            
+            Debug.Log($"[Flag] After base.Start() call for {name}");
         }
 
         private void OnTriggerEnter(Collider other)
         {
             // Check if a unit has reached the flag
-            BaseUnit unit = other.GetComponent<BaseUnit>(); // change get component to use 
+            BaseUnit unit = other.GetComponent<BaseUnit>();
             if (unit != null && unit.EntityType != EntityType.Enemy && unit.EntityType != EntityType.Flag)
             {
                 // Notify the event system
                 if (eventManager != null)
                 {
+                    Debug.Log($"[Flag] Unit reached flag: {unit.name}");
                     eventManager.UnitReachedFlag(unit.gameObject);
                 }
             }
