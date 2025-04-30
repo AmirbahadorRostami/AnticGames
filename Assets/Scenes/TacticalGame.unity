@@ -891,7 +891,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 6767705181053299092, guid: 984eb842e83dd47efaa89c55e30b9554, type: 3}
-  spawnDelay: 1
+  spawnDelay: 0.1
   flagTransform: {fileID: 1591831276}
   debugLog: 1
 --- !u!114 &846541295
@@ -901,12 +901,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 846541287}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 75bb336a842124469a682f64d12e6b92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  monitorFlagObjects: 0
+  monitorFlagObjects: 1
   checkInterval: 1
 --- !u!1 &1094966083
 GameObject:

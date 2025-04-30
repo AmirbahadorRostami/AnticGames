@@ -32,12 +32,6 @@ namespace TacticalGame.Units
         /// </summary>
         protected virtual void OnReachedDestination()
         {
-            // Unit reached the flag
-            if (eventManager != null)
-            {
-                eventManager.UnitReachedFlag(gameObject);
-            }
-            
             // By default, stop moving once destination is reached
             isMoving = false;
         }

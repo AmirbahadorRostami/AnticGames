@@ -11,6 +11,7 @@ namespace TacticalGame.Game
         [Header("Enemy Settings")]
         [SerializeField] private GameObject enemyPrefab;
         [SerializeField] private float spawnDelay = 1f;
+        [SerializeField] private float spawnDistanceFromFlag = 3f; // Distance to spawn away from flag
         
         [Header("References")]
         [SerializeField] private Transform flagTransform;
@@ -77,7 +78,7 @@ namespace TacticalGame.Game
         }
         
         /// <summary>
-        /// Spawns the enemy unit at the flag position
+        /// Spawns the enemy unit at an offset from the flag position
         /// </summary>
         public void SpawnEnemy()
         {
@@ -85,10 +86,16 @@ namespace TacticalGame.Game
                 return;
                 
             if (debugLog)
-                Debug.Log("[EnemySpawner] Spawning enemy at flag position");
+                Debug.Log("[EnemySpawner] Spawning enemy near flag position");
                 
-            // Calculate spawn position
-            Vector3 spawnPosition = flagTransform.position;
+            // Calculate spawn position with an offset from the flag
+            Vector3 randomDirection = new Vector3(
+                Random.Range(-1f, 1f),
+                0,
+                Random.Range(-1f, 1f)
+            ).normalized;
+            
+            Vector3 spawnPosition = flagTransform.position + (randomDirection * spawnDistanceFromFlag);
             spawnPosition.y += 0.5f; // Adjust y position to be above ground
             
             // Spawn enemy
@@ -96,7 +103,7 @@ namespace TacticalGame.Game
             enemy.name = "Enemy";
             
             if (debugLog)
-                Debug.Log($"[EnemySpawner] Enemy spawned at {spawnPosition}");
+                Debug.Log($"[EnemySpawner] Enemy spawned at {spawnPosition} (offset from flag)");
                 
             enemySpawned = true;
         }
