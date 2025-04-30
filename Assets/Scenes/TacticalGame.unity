@@ -901,12 +901,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 846541287}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 75bb336a842124469a682f64d12e6b92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  monitorFlagObjects: 1
+  monitorFlagObjects: 0
   checkInterval: 1
 --- !u!1 &1094966083
 GameObject:
@@ -1187,7 +1187,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f592eba0fd02349859430874b635f467, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  entityType: 0
+  entityType: 4
   detectionRadius: 1
 --- !u!23 &1591831273
 MeshRenderer:

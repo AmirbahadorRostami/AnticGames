@@ -25,8 +25,8 @@ namespace TacticalGame.Units
         protected bool isMoving = true;
         
         // State tracking
-        protected float currentHealth;
-        protected bool isAlive = true;
+        [SerializeField] protected float currentHealth;
+        [SerializeField] protected bool isAlive = true;
         
         // References
         protected GameEventManager eventManager;
