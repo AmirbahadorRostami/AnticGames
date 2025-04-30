@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a165d7ed57de4ba5ae8953a00ead10e, type: 3}
+  m_Name: EnemyConfig
+  m_EditorClassIdentifier: 
+  unitPrefab: {fileID: 6767705181053299092, guid: 984eb842e83dd47efaa89c55e30b9554, type: 3}
+  unitName: Enemy
+  description: AI Enemy that destroies other units
+  moveSpeed: 3
+  acceleration: 8
+  deceleration: 12
+  rotationSpeed: 360
+  maxHealth: 100
+  pointValue: 10
+  detectionRange: 5
+  attackRange: 1.5
+  attackDamage: 25
+  attackCooldown: 1
+  unitColor: {r: 1, g: 0, b: 0, a: 1}
