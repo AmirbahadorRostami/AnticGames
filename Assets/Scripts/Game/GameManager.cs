@@ -187,13 +187,8 @@ namespace TacticalGame.Game
 
         public void SetMuteAudio(bool state)
         {
-            audioSource.mute = true;
+            audioSource.mute = state;
         }
 
-
-        public void UnMuteAudio()
-        {
-            audioSource.mute = false;
-        }
     }
 }
