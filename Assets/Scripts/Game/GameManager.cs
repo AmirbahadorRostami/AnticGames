@@ -21,6 +21,8 @@ namespace TacticalGame.Game
         
         public static GameManager Instance { get; private set; }
 
+        public static Transform FlagTransform { get; private set; }
+
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -30,6 +32,13 @@ namespace TacticalGame.Game
             }
             
             Instance = this;
+
+
+            if(flagTransform != null)
+            {
+                FlagTransform = flagTransform;
+            }
+
         }
         
         private void Start()

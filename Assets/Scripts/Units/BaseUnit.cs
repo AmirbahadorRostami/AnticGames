@@ -4,6 +4,7 @@ using TacticalGame.Grid;
 using TacticalGame.Events;
 using TacticalGame.ScriptableObjects;
 using TacticalGame.Units.Movement;
+using TacticalGame.Game;
 
 namespace TacticalGame.Units
 {
@@ -59,14 +60,14 @@ namespace TacticalGame.Units
 
         protected virtual void FindFlag()
         {
-            GameObject flagObj = GameObject.FindGameObjectWithTag("Flag");
-            if (flagObj != null)
+            targetTransform = GameManager.FlagTransform;
+            if (targetTransform == null)
             {
-                targetTransform = flagObj.transform;
-            }
-            else
-            {
-                Debug.LogError("Flag not found! Unit needs a target.");
+                targetTransform = GameObject.FindGameObjectWithTag("Flag").transform;
+                if(targetTransform == null)
+                {
+                    Debug.LogError("Flag not found! Unit needs a target.");
+                }
             }
         }
 
