@@ -5,6 +5,7 @@ namespace TacticalGame.Events
 {
     /// <summary>
     /// Component that listens for a GameEvent and responds with a UnityEvent.
+    /// 
     /// </summary>
     public class GameEventListener : MonoBehaviour
     {

@@ -4,6 +4,8 @@ namespace TacticalGame.ScriptableObjects
 {
     /// <summary>
     /// Base class for ScriptableObjects that need to store runtime variable values.
+    ///
+    /// did not use currently but implementd for demonstration purposes.
     /// </summary>
     public abstract class RuntimeVariable<T> : ScriptableObject
     {

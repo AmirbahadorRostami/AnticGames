@@ -5,7 +5,8 @@ namespace TacticalGame.Events
 {
     /// <summary>
     /// ScriptableObject-based event system for decoupled communication between components.
-    /// Create instances through Create > TacticalGame > Game Event
+    /// Implememnted for demonstration purposes, did not really use at this point
+    /// great for extendebility
     /// </summary>
     [CreateAssetMenu(fileName = "NewGameEvent", menuName = "TacticalGame/Game Event")]
     public class GameEvent : ScriptableObject
