@@ -2357,9 +2357,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entityType: 4
-  unitLayerMask:
-    serializedVersion: 2
-    m_Bits: 64
+  checkRadius: 1
+  checkInterval: 0.2
   debugLogging: 1
 --- !u!23 &1591831273
 MeshRenderer:
