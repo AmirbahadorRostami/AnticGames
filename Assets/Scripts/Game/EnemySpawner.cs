@@ -15,17 +15,16 @@ namespace TacticalGame.Game
         
         [Header("References")]
         [SerializeField] private Transform flagTransform;
-        
+        [SerializeField] private GameEventManager eventManager;
+
         [Header("Debug")]
         [SerializeField] private bool debugLog = true;
         
-        private GameEventManager eventManager;
+        
         private bool enemySpawned = false;
         
         private void Start()
         {
-            // Find event manager
-            eventManager = FindObjectOfType<GameEventManager>();
             if (eventManager != null)
             {
                 eventManager.OnGameStart += SpawnEnemy;
@@ -58,14 +57,6 @@ namespace TacticalGame.Game
                     Debug.LogError("[EnemySpawner] No flag found in scene!");
                 }
             }
-            
-            // Debug check for all flags in the scene
-            GameObject[] flagObjects = GameObject.FindGameObjectsWithTag("Flag");
-            Debug.Log($"[EnemySpawner] Found {flagObjects.Length} objects with tag 'Flag' in the scene:");
-            foreach (GameObject flagObj in flagObjects)
-            {
-                Debug.Log($"[EnemySpawner] Flag object: {flagObj.name} at {flagObj.transform.position}");
-            }
         }
         
         private void OnDestroy()
@@ -85,10 +76,6 @@ namespace TacticalGame.Game
             if (enemySpawned || enemyPrefab == null || flagTransform == null)
                 return;
                 
-            if (debugLog)
-                Debug.Log("[EnemySpawner] Spawning enemy near flag position");
-                
-            // Calculate spawn position with an offset from the flag
             Vector3 randomDirection = new Vector3(
                 Random.Range(-1f, 1f),
                 0,

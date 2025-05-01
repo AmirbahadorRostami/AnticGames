@@ -112,6 +112,11 @@ namespace TacticalGame.UI
         
         private void ShowMainMenu()
         {
+            if (gameManager.IsGameActive())
+            {
+
+            }
+
             SetActivePanels(mainMenuPanel);
         }
         

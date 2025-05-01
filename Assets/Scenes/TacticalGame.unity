@@ -1682,6 +1682,7 @@ MonoBehaviour:
   spawnDelay: 0.1
   spawnDistanceFromFlag: 3
   flagTransform: {fileID: 1591831276}
+  eventManager: {fileID: 846541291}
   debugLog: 1
 --- !u!114 &846541295
 MonoBehaviour:
@@ -1695,7 +1696,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75bb336a842124469a682f64d12e6b92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  monitorFlagObjects: 1
+  monitorFlagObjects: 0
   checkInterval: 1
 --- !u!1 &986881900
 GameObject:
@@ -2356,7 +2357,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entityType: 4
-  detectionRadius: 1
+  unitLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
+  debugLogging: 1
 --- !u!23 &1591831273
 MeshRenderer:
   m_ObjectHideFlags: 0

@@ -1,6 +1,7 @@
 using UnityEngine;
 using TacticalGame.Events;
 using TacticalGame.ScriptableObjects;
+using TacticalGame.Units;
 
 namespace TacticalGame.Game
 {
@@ -58,7 +59,7 @@ namespace TacticalGame.Game
             if (!gameActive) 
                 return;
             
-            Units.BaseUnit baseUnit = unit.GetComponent<Units.BaseUnit>();
+            BaseUnit baseUnit = unit.GetComponent<BaseUnit>();
             if (baseUnit != null)
             {
                 int pointValue = baseUnit.GetPointValue();

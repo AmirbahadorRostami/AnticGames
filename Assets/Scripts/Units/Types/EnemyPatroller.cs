@@ -56,7 +56,7 @@ namespace TacticalGame.Units.Types
                 
                 foreach (IGridEntity entity in nearbyEntities)
                 {
-                    if (entity is BaseUnit && !(entity is EnemyUnit) && entity != this)
+                    if (entity is BaseUnit && !(entity is EnemyPatroller) && entity != this)
                     {
                         BaseUnit unit = entity as BaseUnit;
                         SetTargetUnit(unit);
@@ -79,7 +79,7 @@ namespace TacticalGame.Units.Types
             foreach (BaseUnit unit in allUnits)
             {
                 // Skip self and other enemies
-                if (unit == this || unit is EnemyUnit)
+                if (unit == this || unit is EnemyPatroller)
                     continue;
                 
                 float distance = Vector3.Distance(transform.position, unit.transform.position);
