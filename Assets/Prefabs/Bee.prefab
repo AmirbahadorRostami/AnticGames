@@ -120,6 +120,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityType: 2
   unitConfig: {fileID: 11400000, guid: f1bf63b01d4f640ab9e3e15000007c06, type: 2}
+  meshRenderer: {fileID: 5629506476474859867}
   targetTransform: {fileID: 0}
   currentHealth: 0
   isAlive: 1

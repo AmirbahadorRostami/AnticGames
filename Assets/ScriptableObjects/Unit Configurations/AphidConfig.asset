@@ -20,7 +20,7 @@ MonoBehaviour:
   deceleration: 12
   rotationSpeed: 360
   maxHealth: 10
-  pointValue: 10
+  pointValue: 20
   detectionRange: 5
   attackRange: 1.5
   attackDamage: 25

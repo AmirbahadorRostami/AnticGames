@@ -1466,6 +1466,7 @@ MonoBehaviour:
   restartButton: {fileID: 550763240}
   resumeButton: {fileID: 1458806452}
   mainMenuButton: {fileID: 2003582746}
+  exitGameButton: {fileID: 400148220}
 --- !u!114 &779880018
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2358,7 +2359,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityType: 4
   checkRadius: 1
-  checkInterval: 0.2
+  checkIntervalMs: 200
   debugLogging: 1
 --- !u!23 &1591831273
 MeshRenderer:

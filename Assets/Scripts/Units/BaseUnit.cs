@@ -17,7 +17,8 @@ namespace TacticalGame.Units
     {
         [Header("Unit Configuration")]
         [SerializeField] protected UnitConfig unitConfig;
-        
+        [SerializeField] protected Renderer meshRenderer;
+
         [Header("Target")]
         [SerializeField] protected Transform targetTransform;
         
@@ -45,10 +46,9 @@ namespace TacticalGame.Units
                 FindFlag();
             }
             
-            // Initialize health
+            // Initialize 
             currentHealth = unitConfig.maxHealth;
-            
-            // Initialize movement
+            meshRenderer.material.color = unitConfig.unitColor;
             InitializeMovement();
             
             // Notify about spawn

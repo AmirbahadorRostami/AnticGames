@@ -26,6 +26,7 @@ namespace TacticalGame.UI
         [SerializeField] private Button restartButton;
         [SerializeField] private Button resumeButton;
         [SerializeField] private Button mainMenuButton;
+        [SerializeField] private Button exitGameButton;
         
         private GameEventManager eventManager;
         private GameManager gameManager;
@@ -55,10 +56,13 @@ namespace TacticalGame.UI
                 
             if (resumeButton != null)
                 resumeButton.onClick.AddListener(OnResumeButtonClicked);
-                
-                
+               
             if (mainMenuButton != null)
                 mainMenuButton.onClick.AddListener(OnMainMenuButtonClicked);
+
+            if (exitGameButton != null)
+                exitGameButton.onClick.AddListener(OnExitButtonClicked);
+
                 
             // Initial UI state
             ShowMainMenu();
@@ -173,7 +177,15 @@ namespace TacticalGame.UI
                 gameManager.ResumeGame();
             }
         }
-        
+
+        private void OnExitButtonClicked()
+        {
+            if (gameManager != null)
+            {
+                gameManager.QuitGame();
+            }
+        }
+
         //private void OnPauseButtonClicked()
         //{
         //    if (gameManager != null)
@@ -181,7 +193,7 @@ namespace TacticalGame.UI
         //        gameManager.PauseGame();
         //    }
         //}
-        
+
         private void OnMainMenuButtonClicked()
         {
             if (gameManager != null)

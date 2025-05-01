@@ -157,6 +157,13 @@ namespace TacticalGame.Game
                 
             Debug.Log("Game Resumed!");
         }
+
+
+        public void QuitGame()
+        {
+            Application.Quit();
+        }
+
         
         /// <summary>
         /// Get the current score.
