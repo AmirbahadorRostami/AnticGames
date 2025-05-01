@@ -27,9 +27,11 @@ namespace TacticalGame.UI
         [SerializeField] private Button resumeButton;
         [SerializeField] private Button mainMenuButton;
         [SerializeField] private Button exitGameButton;
+        [SerializeField] private Button MusicButton;
         
         private GameEventManager eventManager;
         private GameManager gameManager;
+        private bool isMusicOff = false;
 
         private void Start()
         {
@@ -40,9 +42,6 @@ namespace TacticalGame.UI
             // Subscribe to events
             if (eventManager != null)
             {
-                eventManager.OnGameStart += HandleGameStart;
-                eventManager.OnGamePause += HandleGamePause;
-                eventManager.OnGameResume += HandleGameResume;
                 eventManager.OnGameOver += HandleGameOver;
                 eventManager.OnScoreUpdated += HandleScoreUpdated;
             }
@@ -52,7 +51,7 @@ namespace TacticalGame.UI
                 startButton.onClick.AddListener(OnStartButtonClicked);
                 
             if (restartButton != null)
-                restartButton.onClick.AddListener(OnRestartButtonClicked);
+                restartButton.onClick.AddListener(OnExitButtonClicked);
                 
             if (resumeButton != null)
                 resumeButton.onClick.AddListener(OnResumeButtonClicked);
@@ -63,38 +62,43 @@ namespace TacticalGame.UI
             if (exitGameButton != null)
                 exitGameButton.onClick.AddListener(OnExitButtonClicked);
 
-                
+            if (MusicButton != null)
+                MusicButton.onClick.AddListener(OnMusicButtonClicked);
+
             // Initial UI state
             ShowMainMenu();
         }
         
         private void OnDestroy()
         {
+
+            // Button listeners
+            if (startButton != null)
+                startButton.onClick.RemoveListener(OnStartButtonClicked);
+
+            if (restartButton != null)
+                restartButton.onClick.RemoveListener(OnExitButtonClicked);
+
+            if (resumeButton != null)
+                resumeButton.onClick.RemoveListener(OnResumeButtonClicked);
+
+            if (mainMenuButton != null)
+                mainMenuButton.onClick.RemoveListener(OnMainMenuButtonClicked);
+
+            if (exitGameButton != null)
+                exitGameButton.onClick.RemoveListener(OnExitButtonClicked);
+
+            if (MusicButton != null)
+                MusicButton.onClick.RemoveListener(OnMusicButtonClicked);
+
             // Unsubscribe from events
             if (eventManager != null)
             {
-                eventManager.OnGameStart -= HandleGameStart;
-                eventManager.OnGamePause -= HandleGamePause;
-                eventManager.OnGameResume -= HandleGameResume;
                 eventManager.OnGameOver -= HandleGameOver;
                 eventManager.OnScoreUpdated -= HandleScoreUpdated;
             }
         }
-        
-        private void HandleGameStart()
-        {
-            //ShowGameplay();
-        }
-        
-        private void HandleGamePause()
-        {
-            //ShowPauseMenu();
-        }
-        
-        private void HandleGameResume()
-        {
-            //ShowGameplay();
-        }
+       
         
         private void HandleGameOver(bool isWin)
         {
@@ -162,14 +166,6 @@ namespace TacticalGame.UI
             SetActivePanels(topPanel);
         }
         
-        private void OnRestartButtonClicked()
-        {
-            if (gameManager != null)
-            {
-                gameManager.StartGame();
-            }
-        }
-        
         private void OnResumeButtonClicked()
         {
             if (gameManager != null)
@@ -186,14 +182,6 @@ namespace TacticalGame.UI
             }
         }
 
-        //private void OnPauseButtonClicked()
-        //{
-        //    if (gameManager != null)
-        //    {
-        //        gameManager.PauseGame();
-        //    }
-        //}
-
         private void OnMainMenuButtonClicked()
         {
             if (gameManager != null)
@@ -202,6 +190,12 @@ namespace TacticalGame.UI
             }
 
             ShowMainMenu();
+        }
+
+        private void OnMusicButtonClicked()
+        {
+            isMusicOff = !isMusicOff;
+            gameManager.SetMuteAudio(isMusicOff);
         }
     }
 }

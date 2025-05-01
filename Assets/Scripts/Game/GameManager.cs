@@ -10,9 +10,12 @@ namespace TacticalGame.Game
     /// </summary>
     public class GameManager : MonoBehaviour
     {
+        [SerializeField] private AudioSource audioSource;
+
         [Header("Game Settings")]
         [SerializeField] private GameConfig gameConfig;
         [SerializeField] private Transform flagTransform;
+
         
         private GameEventManager eventManager;
         private int currentScore = 0;
@@ -179,6 +182,18 @@ namespace TacticalGame.Game
         public bool IsGameActive()
         {
             return gameActive;
+        }
+
+
+        public void SetMuteAudio(bool state)
+        {
+            audioSource.mute = true;
+        }
+
+
+        public void UnMuteAudio()
+        {
+            audioSource.mute = false;
         }
     }
 }

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitsToDestroyToWin: 20
   difficulty: 2
-  baseSpawnRate: 5
+  baseSpawnRate: 3
   minSpawnDistance: 15
   maxSpawnDistance: 25
   spawnRateByDifficulty:
@@ -23,20 +23,20 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 0
-      inSlope: 0.19887862
-      outSlope: 0.19887862
+      inSlope: 0.19829589
+      outSlope: 0.19829589
       tangentMode: 34
       weightedMode: 0
       inWeight: 0
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 4.9906015
-      value: 0.9925239
-      inSlope: 0.19887862
-      outSlope: 0.19887862
-      tangentMode: 34
+      time: 5.0429688
+      value: 1
+      inSlope: 0.433444
+      outSlope: 0.433444
+      tangentMode: 0
       weightedMode: 0
-      inWeight: 0.33333334
+      inWeight: 0.08126668
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
