@@ -36,7 +36,7 @@ namespace TacticalGame.Units.Types
             {
                 await Task.Delay(500, token); // Initial delay of 0.5 seconds
 
-                Debug.Log("Enemy: Starting patrol and search");
+                Debug.Log("Ant: Starting patrol and search");
 
                 // Set initial patrol point at flag
                 if (targetTransform != null)
@@ -53,7 +53,7 @@ namespace TacticalGame.Units.Types
             catch (TaskCanceledException)
             {
                 // Task was canceled, nothing to do
-                Debug.Log("Enemy: Delayed start was canceled");
+                Debug.Log("Ant: Delayed start was canceled");
             }
         }
 
@@ -70,7 +70,7 @@ namespace TacticalGame.Units.Types
             catch (TaskCanceledException)
             {
                 // Task was canceled, nothing to do
-                Debug.Log("Enemy: Periodic search was canceled");
+                Debug.Log("Ant: Periodic search was canceled");
             }
         }
 
@@ -80,7 +80,7 @@ namespace TacticalGame.Units.Types
             if (GridManager.Instance != null && GridManager.Instance.Grid != null)
             {
                 List<IGridEntity> nearbyEntities = GridManager.Instance.Grid.GetEntitiesInRadius(transform.position, searchRadius);
-                Debug.Log($"Enemy: Grid search found {nearbyEntities.Count} entities");
+                Debug.Log($"Ant: Grid search found {nearbyEntities.Count} entities");
 
                 foreach (IGridEntity entity in nearbyEntities)
                 {
@@ -99,7 +99,7 @@ namespace TacticalGame.Units.Types
 
         private void FallbackSearch()
         {
-            Debug.Log("Enemy: Using fallback search");
+            Debug.Log("Ant: Using fallback search");
 
             // Direct find
             BaseUnit[] allUnits = FindObjectsOfType<BaseUnit>();
@@ -134,7 +134,7 @@ namespace TacticalGame.Units.Types
             isPatrolling = false;
             StartMoving();
 
-            Debug.Log($"Enemy: Found target {target.name}");
+            Debug.Log($"Ant: Found target {target.name}");
         }
 
         protected override void Update()
@@ -153,7 +153,7 @@ namespace TacticalGame.Units.Types
                     // Apply damage immediately for testing
                     currentTarget.TakeDamage(attackDamage * Time.deltaTime);
 
-                    Debug.Log($"Enemy: Attacking {currentTarget.name}");
+                    Debug.Log($"Ant: Attacking {currentTarget.name}");
                 }
                 else
                 {
@@ -185,7 +185,7 @@ namespace TacticalGame.Units.Types
             // Store patrol point for reference
             patrolPoint = randomPoint;
 
-            Debug.Log($"Enemy: New patrol point at {randomPoint}");
+            Debug.Log($"Ant: New patrol point at {randomPoint}");
         }
 
         private void OnDisable()

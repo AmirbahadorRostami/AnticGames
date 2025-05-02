@@ -4,11 +4,11 @@ using System.Collections;
 namespace TacticalGame.Units.Types
 {
     /// <summary>
-    /// Bee unit implementation. Bees move with smooth, curved flight paths.
+    /// Ladybug unit implementation. Bees move with smooth, curved flight paths.
     /// </summary>
-    public class BeeUnit : BaseUnit
+    public class LadyBugUnit : BaseUnit
     {
-        [Header("Bee-Specific Settings")]
+        [Header("Ladybug-Specific Settings")]
         [SerializeField] private float hoverHeight = 1.5f;
         [SerializeField] private float hoverVariation = 0.5f;
         [SerializeField] private float zigzagFrequency = 1.5f;

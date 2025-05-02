@@ -83,7 +83,7 @@ namespace TacticalGame.Units.Movement
             // Choose the best movement type for each entity
             switch (entityType)
             {
-                case Grid.EntityType.Ant:
+                case Grid.EntityType.Beetles:
                     // Ants use transform-based movement - simple and direct
                     return CreateMovementStrategy(MovementType.Transform, movingObject, targetPosition, moveSpeed);
                     
@@ -91,12 +91,12 @@ namespace TacticalGame.Units.Movement
                     // Aphids use physics-based movement - more organic and can interact with environment
                     return CreateMovementStrategy(MovementType.Rigidbody, movingObject, targetPosition, moveSpeed);
                     
-                case Grid.EntityType.Bee:
+                case Grid.EntityType.Ladybug:
                     // Bees use tween movement - smooth and elegant flight paths
                     return CreateMovementStrategy(MovementType.Tween, movingObject, targetPosition, moveSpeed);
                     
-                case Grid.EntityType.Enemy:
-                    // Enemy uses transform-based movement for precise interception
+                case Grid.EntityType.Ant:
+                    // Ant uses transform-based movement for precise interception
                     return CreateMovementStrategy(MovementType.Transform, movingObject, targetPosition, moveSpeed);
                     
                 default:

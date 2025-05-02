@@ -104,7 +104,7 @@ namespace TacticalGame.Units
                 }
                 
                 // Skip if the entity is an enemy
-                if (entity.EntityType == EntityType.Enemy)
+                if (entity.EntityType == EntityType.Ant)
                 {
                     continue;
                 }

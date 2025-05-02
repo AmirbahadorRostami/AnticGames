@@ -3,11 +3,11 @@ using UnityEngine;
 namespace TacticalGame.Units.Types
 {
     /// <summary>
-    /// Ant unit implementation. Ants are basic units with straightforward movement.
+    /// Beetles unit implementation. Ants are basic units with straightforward movement.
     /// </summary>
-    public class AntUnit : BaseUnit
+    public class BeetleUnit : BaseUnit
     {
-        [Header("Ant-Specific Settings")]
+        [Header("Beetles-Specific Settings")]
         [SerializeField] private float pathDirectness = 0.9f; // How directly the ant moves toward the target (0-1)
         
         private Vector3 lastMoveDirection;

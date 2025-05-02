@@ -34,7 +34,7 @@ namespace TacticalGame.ScriptableObjects
         );
 
         [Header("Unit Type Weights")]
-        [Tooltip("Probability weight for Ant units")]
+        [Tooltip("Probability weight for Beetles units")]
         [Range(0, 100)]
         public float antSpawnWeight = 60f;
         
@@ -42,21 +42,21 @@ namespace TacticalGame.ScriptableObjects
         [Range(0, 100)]
         public float aphidSpawnWeight = 30f;
         
-        [Tooltip("Probability weight for Bee units")]
+        [Tooltip("Probability weight for Ladybug units")]
         [Range(0, 100)]
         public float beeSpawnWeight = 10f;
 
-        [Header("Enemy Settings")]
-        [Tooltip("Enemy movement speed")]
+        [Header("Ant Settings")]
+        [Tooltip("Ant movement speed")]
         public float enemySpeed = 5f;
         
-        [Tooltip("Enemy search radius")]
+        [Tooltip("Ant search radius")]
         public float enemySearchRadius = 8f;
         
         [Tooltip("Time enemy waits after destroying a unit")]
         public float enemyCooldown = 0.5f;
         
-        [Tooltip("Enemy speed multiplier based on difficulty")]
+        [Tooltip("Ant speed multiplier based on difficulty")]
         public AnimationCurve enemySpeedByDifficulty = new AnimationCurve(
             new Keyframe(1, 0.8f),  // Easier: Slower enemy
             new Keyframe(3, 1.0f),  // Normal

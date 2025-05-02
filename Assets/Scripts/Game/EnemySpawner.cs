@@ -8,7 +8,7 @@ namespace TacticalGame.Game
     /// </summary>
     public class EnemySpawner : MonoBehaviour
     {
-        [Header("Enemy Settings")]
+        [Header("Ant Settings")]
         [SerializeField] private GameObject enemyPrefab;
         [SerializeField] private float spawnDelay = 1f;
         [SerializeField] private float spawnDistanceFromFlag = 3f; // Distance to spawn away from flag
@@ -87,10 +87,10 @@ namespace TacticalGame.Game
             
             // Spawn enemy
             GameObject enemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
-            enemy.name = "Enemy";
+            enemy.name = "Ant";
             
             if (debugLog)
-                Debug.Log($"[EnemySpawner] Enemy spawned at {spawnPosition} (offset from flag)");
+                Debug.Log($"[EnemySpawner] Ant spawned at {spawnPosition} (offset from flag)");
                 
             enemySpawned = true;
         }

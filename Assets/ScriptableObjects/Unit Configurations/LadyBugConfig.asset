@@ -10,19 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4a165d7ed57de4ba5ae8953a00ead10e, type: 3}
-  m_Name: EnemyConfig
+  m_Name: LadyBugConfig
   m_EditorClassIdentifier: 
-  unitPrefab: {fileID: 6767705181053299092, guid: 984eb842e83dd47efaa89c55e30b9554, type: 3}
-  unitName: Enemy
-  description: AI Enemy that destroies other units
+  unitPrefab: {fileID: 4918719047869627825, guid: 8cefdef3c63214934a4b7e800075ca14, type: 3}
+  unitName: Bee
+  description: Bee unit
   moveSpeed: 3
   acceleration: 8
   deceleration: 12
   rotationSpeed: 360
-  maxHealth: 100
-  pointValue: 10
-  detectionRange: 20
-  attackRange: 2
-  attackDamage: 100
+  maxHealth: 10
+  pointValue: 15
+  detectionRange: 5
+  attackRange: 1.5
+  attackDamage: 25
   attackCooldown: 1
-  unitColor: {r: 1, g: 0, b: 0, a: 1}
+  unitColor: {r: 0.95110905, g: 1, b: 0, a: 1}

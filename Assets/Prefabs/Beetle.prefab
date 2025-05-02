@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &4918719047869627825
+--- !u!1 &2739396122314991692
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,48 +8,48 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6844268222042963179}
-  - component: {fileID: 2894357489750767756}
-  - component: {fileID: 5629506476474859867}
-  - component: {fileID: 2434631888946217440}
-  - component: {fileID: 983699351008482543}
+  - component: {fileID: 5793411392657955566}
+  - component: {fileID: 416027524038420136}
+  - component: {fileID: 5889386495350533731}
+  - component: {fileID: 5016084310810277159}
+  - component: {fileID: 4476502792542511300}
   m_Layer: 6
-  m_Name: Bee
+  m_Name: Beetle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &6844268222042963179
+--- !u!4 &5793411392657955566
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4918719047869627825}
+  m_GameObject: {fileID: 2739396122314991692}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.24, y: 1.8143275, z: -0.04583649}
+  m_LocalPosition: {x: -2.98, y: 1.8143275, z: -0.04583649}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &2894357489750767756
+--- !u!33 &416027524038420136
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4918719047869627825}
+  m_GameObject: {fileID: 2739396122314991692}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &5629506476474859867
+--- !u!23 &5889386495350533731
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4918719047869627825}
+  m_GameObject: {fileID: 2739396122314991692}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e49e35e52b45246ad9f5fcb2c5471940, type: 2}
+  - {fileID: 2100000, guid: b7c16e54b99f04845b0433dddbddf34e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -85,13 +85,13 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &2434631888946217440
+--- !u!135 &5016084310810277159
 SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4918719047869627825}
+  m_GameObject: {fileID: 2739396122314991692}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -106,25 +106,22 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &983699351008482543
+--- !u!114 &4476502792542511300
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4918719047869627825}
+  m_GameObject: {fileID: 2739396122314991692}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45602b7432fd74adfbf72a94a404c409, type: 3}
+  m_Script: {fileID: 11500000, guid: aa4764b83dd6f40fc9b2eaa7976517f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  entityType: 2
-  unitConfig: {fileID: 11400000, guid: f1bf63b01d4f640ab9e3e15000007c06, type: 2}
-  meshRenderer: {fileID: 5629506476474859867}
+  entityType: 0
+  unitConfig: {fileID: 11400000, guid: 42f54ff0d41c74bbb9d23bed60e6b307, type: 2}
+  meshRenderer: {fileID: 5889386495350533731}
   targetTransform: {fileID: 0}
   currentHealth: 0
   isAlive: 1
-  hoverHeight: 1.5
-  hoverVariation: 0.5
-  zigzagFrequency: 1.5
-  zigzagAmplitude: 2
+  pathDirectness: 0.9

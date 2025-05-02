@@ -14,7 +14,6 @@ namespace TacticalGame.Units
         [SerializeField] private UnitConfig antConfig;
         [SerializeField] private UnitConfig aphidConfig;
         [SerializeField] private UnitConfig beeConfig;
-        [SerializeField] private UnitConfig enemyConfig;
         
         [Header("Spawn Settings")]
         [SerializeField] private Transform flagTransform;
@@ -94,7 +93,7 @@ namespace TacticalGame.Units
             
             if (randomValue < gameConfig.antSpawnWeight)
             {
-                unitType = EntityType.Ant;
+                unitType = EntityType.Beetles;
             }
             else if (randomValue < gameConfig.antSpawnWeight + gameConfig.aphidSpawnWeight)
             {
@@ -102,7 +101,7 @@ namespace TacticalGame.Units
             }
             else
             {
-                unitType = EntityType.Bee;
+                unitType = EntityType.Ladybug;
             }
             
             return CreateUnit(unitType, position);
@@ -115,14 +114,12 @@ namespace TacticalGame.Units
         {
             switch (unitType)
             {
-                case EntityType.Ant:
+                case EntityType.Beetles:
                     return antConfig;
                 case EntityType.Aphid:
                     return aphidConfig;
-                case EntityType.Bee:
+                case EntityType.Ladybug:
                     return beeConfig;
-                case EntityType.Enemy:
-                    return enemyConfig;
                 default:
                     return null;
             }

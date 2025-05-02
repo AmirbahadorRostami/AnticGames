@@ -5,10 +5,10 @@ namespace TacticalGame.Grid
     /// </summary>
     public enum EntityType
     {
-        Ant,
+        Beetles,
         Aphid,
-        Bee,
-        Enemy,
+        Ladybug,
+        Ant,
         Flag
     }
 }

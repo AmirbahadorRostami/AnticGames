@@ -22,7 +22,7 @@ namespace TacticalGame.Events
         public event Action<GameObject> OnUnitDestroyed;
         public event Action<GameObject> OnUnitReachedFlag;
 
-        // Enemy events
+        // Ant events
         public event Action<GameObject, GameObject> OnEnemyTargetingUnit;  // Parameters: enemy, target
         public event Action<GameObject> OnEnemyIdle;
 
@@ -79,7 +79,7 @@ namespace TacticalGame.Events
             OnUnitReachedFlag?.Invoke(unit);
         }
 
-        // Enemy methods
+        // Ant methods
         public void EnemyTargetingUnit(GameObject enemy, GameObject target)
         {
             OnEnemyTargetingUnit?.Invoke(enemy, target);

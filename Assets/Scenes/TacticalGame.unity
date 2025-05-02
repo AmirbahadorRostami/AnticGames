@@ -1607,7 +1607,6 @@ MonoBehaviour:
   antConfig: {fileID: 11400000, guid: 42f54ff0d41c74bbb9d23bed60e6b307, type: 2}
   aphidConfig: {fileID: 11400000, guid: e3717f660894a4b68a967c750b411fdc, type: 2}
   beeConfig: {fileID: 11400000, guid: f1bf63b01d4f640ab9e3e15000007c06, type: 2}
-  enemyConfig: {fileID: 11400000, guid: 4eda88ef4fa6a4c349c8574bc64e3f11, type: 2}
   flagTransform: {fileID: 1591831276}
   gameConfig: {fileID: 11400000, guid: e720c81cfd58645fabbc43b394476c2d, type: 2}
 --- !u!114 &846541290

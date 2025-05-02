@@ -12,17 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a165d7ed57de4ba5ae8953a00ead10e, type: 3}
   m_Name: AntConfig
   m_EditorClassIdentifier: 
-  unitPrefab: {fileID: 2739396122314991692, guid: a8eed0e5d9a6c4d648a28ae6ff46f973, type: 3}
-  unitName: Ant
-  description: Ant Unit
-  moveSpeed: 3
+  unitPrefab: {fileID: 6767705181053299092, guid: 984eb842e83dd47efaa89c55e30b9554, type: 3}
+  unitName: Ant protector
+  description: AI Enemy that destroies other units
+  moveSpeed: 5
   acceleration: 8
   deceleration: 12
   rotationSpeed: 360
-  maxHealth: 10
+  maxHealth: 100
   pointValue: 10
-  detectionRange: 5
-  attackRange: 1.5
-  attackDamage: 25
+  detectionRange: 20
+  attackRange: 2
+  attackDamage: 100
   attackCooldown: 1
-  unitColor: {r: 0, g: 1, b: 0.011662006, a: 1}
+  unitColor: {r: 1, g: 0, b: 0, a: 1}

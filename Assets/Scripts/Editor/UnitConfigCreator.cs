@@ -13,9 +13,9 @@ namespace TacticalGame.Editor
         [MenuItem("TacticalGame/Create Default Unit Configs")]
         public static void CreateDefaultUnitConfigs()
         {
-            // Create Ant Config
+            // Create Beetles Config
             UnitConfig antConfig = ScriptableObject.CreateInstance<UnitConfig>();
-            antConfig.unitName = "Ant";
+            antConfig.unitName = "Beetles";
             antConfig.description = "Basic unit with simple movement patterns.";
             antConfig.moveSpeed = 3.0f;
             antConfig.maxHealth = 50.0f;
@@ -29,18 +29,18 @@ namespace TacticalGame.Editor
             aphidConfig.maxHealth = 75.0f;
             aphidConfig.pointValue = 15;
             
-            // Create Bee Config
+            // Create Ladybug Config
             UnitConfig beeConfig = ScriptableObject.CreateInstance<UnitConfig>();
-            beeConfig.unitName = "Bee";
+            beeConfig.unitName = "Ladybug";
             beeConfig.description = "Fast unit with smooth, curved flight paths.";
             beeConfig.moveSpeed = 4.0f;
             beeConfig.maxHealth = 40.0f;
             beeConfig.pointValue = 25;
             
-            // Create Enemy Config
+            // Create Ant Config
             UnitConfig enemyConfig = ScriptableObject.CreateInstance<UnitConfig>();
-            enemyConfig.unitName = "Enemy";
-            enemyConfig.description = "Enemy unit that hunts and intercepts other units.";
+            enemyConfig.unitName = "Ant";
+            enemyConfig.description = "Ant unit that hunts and intercepts other units.";
             enemyConfig.moveSpeed = 3.5f;
             enemyConfig.maxHealth = 150.0f;
             enemyConfig.pointValue = 0;
