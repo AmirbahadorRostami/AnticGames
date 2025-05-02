@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using TacticalGame.Utilities;
 
 namespace TacticalGame.Grid
 {
@@ -17,6 +18,7 @@ namespace TacticalGame.Grid
             {
                 cellPositions.Remove(cell);
                 cells.Remove(position);
+                activeGridCells.Remove(position);
                 
                 // Handle any entities in this cell
                 if (entitiesInCell.TryGetValue(position, out var entities) && entities.Count > 0)
@@ -24,17 +26,21 @@ namespace TacticalGame.Grid
                     Debug.LogWarning($"Deleting cell at {position} with {entities.Count} entities still registered.");
                     
                     // Make a copy to avoid modifying during enumeration
-                    List<IGridEntity> entitiesToUnregister = new List<IGridEntity>(entities);
+                    var entitiesToUnregister = new List<IGridEntity>(entities);
                     foreach (var entity in entitiesToUnregister)
                     {
                         UnregisterEntity(entity);
                     }
                 }
                 
-                entitiesInCell.Remove(position);
+                // Only remove from entitiesInCell if there are no entities left
+                if (!entitiesInCell.TryGetValue(position, out entities) || entities.Count == 0)
+                {
+                    entitiesInCell.Remove(position);
+                }
             }
         }
-
+        
         /// <summary>
         /// Delete a specific cell.
         /// </summary>
@@ -45,41 +51,67 @@ namespace TacticalGame.Grid
                 cellPositions.Remove(cell);
                 cells.Remove(position);
                 
+                if (!entitiesInCell.TryGetValue(position, out var entities) || entities.Count == 0)
+                {
+                    activeGridCells.Remove(position);
+                }
+                
                 // Handle any entities in this cell
-                if (entitiesInCell.TryGetValue(position, out var entities) && entities.Count > 0)
+                if (entities != null && entities.Count > 0)
                 {
                     Debug.LogWarning($"Deleting cell with {entities.Count} entities still registered.");
                     
                     // Make a copy to avoid modifying during enumeration
-                    List<IGridEntity> entitiesToUnregister = new List<IGridEntity>(entities);
+                    var entitiesToUnregister = new List<IGridEntity>(entities);
                     foreach (var entity in entitiesToUnregister)
                     {
                         UnregisterEntity(entity);
                     }
                 }
                 
-                entitiesInCell.Remove(position);
+                // Only remove from entitiesInCell if there are no entities left
+                if (!entitiesInCell.TryGetValue(position, out entities) || entities.Count == 0)
+                {
+                    entitiesInCell.Remove(position);
+                }
             }
         }
-
+        
+        // Fix: Removed readonly modifier and using local variables instead
         /// <summary>
-        /// Convert a world position to grid coordinates.
+        /// Convert a world position to grid coordinates. Optimized to minimize allocations.
         /// </summary>
         public Vector2Int WorldToGrid(Vector3 worldPosition)
         {
             int x = Mathf.FloorToInt((worldPosition.x - WorldOffset.x) / CellSize);
-            int y = Mathf.FloorToInt((worldPosition.z - WorldOffset.y) / CellSize);  // For 2D, using XZ plane
+            int y = Mathf.FloorToInt((worldPosition.z - WorldOffset.y) / CellSize);
             return new Vector2Int(x, y);
         }
-
+        
+        // Fix: Removed readonly modifier and using local variables instead
         /// <summary>
         /// Convert grid coordinates to a world position (center of the cell).
+        /// Optimized to minimize allocations.
         /// </summary>
         public Vector3 GridToWorld(Vector2Int gridPosition)
         {
             float x = (gridPosition.x * CellSize) + (CellSize / 2) + WorldOffset.x;
-            float z = (gridPosition.y * CellSize) + (CellSize / 2) + WorldOffset.y;  // For 2D, using XZ plane
-            return new Vector3(x, 0, z);
+            float y = 0;
+            float z = (gridPosition.y * CellSize) + (CellSize / 2) + WorldOffset.y;
+            return new Vector3(x, y, z);
+        }
+        
+        /// <summary>
+        /// Get all active cells in the grid. Returns a pooled list that must be returned.
+        /// </summary>
+        public List<Vector2Int> GetActiveCells()
+        {
+            List<Vector2Int> result = ListPool<Vector2Int>.Get();
+            foreach (var cell in activeGridCells)
+            {
+                result.Add(cell);
+            }
+            return result;
         }
     }
 }

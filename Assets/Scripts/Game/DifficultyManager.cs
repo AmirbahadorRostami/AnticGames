@@ -11,9 +11,9 @@ namespace TacticalGame.Game
     {
         public enum DifficultyLevel
         {
-            Easy = 1,
+            Easy = 5,
             Medium = 3,
-            Hard = 5
+            Hard = 1
         }
 
         [Header("Configuration")]

@@ -134,7 +134,7 @@ namespace TacticalGame.Units.Types
             // Higher difficulty = larger search radius, more damage
             if (gameConfig != null)
             {
-                float difficultyFactor = newDifficulty / 3f; // Normalize to 0.33 - 1.67
+                difficultyFactor = newDifficulty / 3f; // Normalize to 0.33 - 1.67
         
                 // Adjust search radius
                 searchRadius = baseSearchRadius * Mathf.Lerp(0.8f, 1.2f, difficultyFactor);

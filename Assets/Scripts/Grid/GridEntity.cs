@@ -5,33 +5,41 @@ namespace TacticalGame.Grid
     /// <summary>
     /// Base component for any entity that exists in the grid system.
     /// Handles registration with the grid and position updates.
+    /// Optimized for performance with minimal updates.
     /// </summary>
     public class GridEntity : MonoBehaviour, IGridEntity
     {
         [SerializeField] private EntityType entityType;
+        [SerializeField] private float updateThreshold = 0.01f; // Distance threshold for position updates
         
         private Vector3 lastRegisteredPosition;
         private bool isRegistered = false;
+        private int framesSinceLastCheck = 0;
+        private const int CHECK_INTERVAL = 2; // Check position every N frames
         
         public Vector3 WorldPosition => transform.position;
         public EntityType EntityType => entityType;
 
         protected virtual void Start()
         {
-            Debug.Log($"[GridEntity] Start called for {name}, type: {entityType}");
             RegisterWithGrid();
         }
 
         protected virtual void OnDestroy()
         {
-            Debug.Log($"[GridEntity] OnDestroy called for {name}, type: {entityType}");
             UnregisterFromGrid();
         }
 
         protected virtual void Update()
         {
-            // Only update grid position if entity has moved
-            if (isRegistered && Vector3.Distance(lastRegisteredPosition, transform.position) > 0.01f)
+            // Only check position every N frames to reduce overhead
+            if (++framesSinceLastCheck < CHECK_INTERVAL)
+                return;
+                
+            framesSinceLastCheck = 0;
+                
+            // Only update grid position if entity has moved significantly
+            if (isRegistered && Vector3.SqrMagnitude(lastRegisteredPosition - transform.position) > updateThreshold * updateThreshold)
             {
                 UpdateGridPosition();
             }
@@ -44,14 +52,10 @@ namespace TacticalGame.Grid
         {
             // Prevent double registration
             if (isRegistered)
-            {
-                Debug.LogWarning($"[GridEntity] {name} already registered with grid. Skipping registration.");
                 return;
-            }
             
             if (GridManager.Instance != null)
             {
-                Debug.Log($"[GridEntity] Registering {name} with grid, type: {entityType}, position: {transform.position}");
                 GridManager.Instance.RegisterEntity(this);
                 lastRegisteredPosition = transform.position;
                 isRegistered = true;
@@ -69,7 +73,6 @@ namespace TacticalGame.Grid
         {
             if (GridManager.Instance != null && isRegistered)
             {
-                Debug.Log($"[GridEntity] Unregistering {name} from grid, type: {entityType}");
                 GridManager.Instance.UnregisterEntity(this);
                 isRegistered = false;
             }
@@ -100,6 +103,14 @@ namespace TacticalGame.Grid
             {
                 UpdateGridPosition();
             }
+        }
+        
+        /// <summary>
+        /// Set the update threshold for position checks.
+        /// </summary>
+        public void SetUpdateThreshold(float threshold)
+        {
+            updateThreshold = Mathf.Max(0.001f, threshold);
         }
     }
 }
