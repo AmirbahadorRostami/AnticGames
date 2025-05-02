@@ -36,7 +36,7 @@ namespace TacticalGame.Units
         /// <summary>
         /// Create a unit of the specified type at the specified position.
         /// </summary>
-        public GameObject CreateUnit(EntityType unitType, Vector3 position)
+        private GameObject CreateUnit(EntityType unitType, Vector3 position)
         {
             UnitConfig config = GetConfigForType(unitType);
             
@@ -112,17 +112,13 @@ namespace TacticalGame.Units
         /// </summary>
         private UnitConfig GetConfigForType(EntityType unitType)
         {
-            switch (unitType)
+            return unitType switch
             {
-                case EntityType.Beetles:
-                    return antConfig;
-                case EntityType.Aphid:
-                    return aphidConfig;
-                case EntityType.Ladybug:
-                    return beeConfig;
-                default:
-                    return null;
-            }
+                EntityType.Beetles => antConfig,
+                EntityType.Aphid => aphidConfig,
+                EntityType.Ladybug => beeConfig,
+                _ => null
+            };
         }
     }
 }

@@ -2,119 +2,72 @@ using UnityEngine;
 using TacticalGame.Grid;
 using TacticalGame.Events;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace TacticalGame.Units
 {
     /// <summary>
-    /// Flag entity that detects units reaching it using the Grid system.
-    /// Uses Task-based asynchronous pattern instead of coroutines for better performance.
+    /// Flag entity that detects units reaching it using the Grid system's events.
+    /// Uses event-based architecture instead of polling with delays.
     /// </summary>
     public class Flag : GridEntity
     {
         [Header("Flag Settings")]
         [SerializeField] private float checkRadius = 1.5f;
-        [SerializeField] private int checkIntervalMs = 200; // Interval in milliseconds
         [SerializeField] private bool debugLogging = false;
 
         private GameEventManager eventManager;
         private HashSet<IGridEntity> processedEntities = new HashSet<IGridEntity>();
-        private CancellationTokenSource cancellationTokenSource;
-        private bool isCheckingActive = false;
 
         protected override void Start()
         {
             eventManager = GameEventManager.Instance;
             base.Start();
             
-            // Start the grid check after a short delay
-            StartGridCheck();
-        }
-
-        private async void StartGridCheck()
-        {
-            // Wait a short time to ensure grid system is initialized
-            await Task.Delay(500);
-            
-            if (debugLogging)
+            // Subscribe to grid events instead of periodic checking
+            if (GridManager.Instance?.Grid != null)
             {
-                Debug.Log($"[Flag] Starting grid-based entity detection at position {transform.position}");
-            }
-            
-            // Create a new cancellation token source
-            cancellationTokenSource = new CancellationTokenSource();
-            isCheckingActive = true;
-            
-            // Start the periodic grid check
-            try
-            {
-                await CheckForEntitiesAsync(cancellationTokenSource.Token);
-            }
-            catch (TaskCanceledException)
-            {
-                // Task was canceled, clean up if needed
+                GridManager.Instance.Grid.OnEntityRegistered += OnEntityRegistered;
+                GridManager.Instance.Grid.OnEntityMoved += OnEntityMoved;
+                
                 if (debugLogging)
                 {
-                    Debug.Log("[Flag] Entity detection task was canceled");
+                    Debug.Log($"[Flag] Initialized with grid events at position {transform.position}");
                 }
+            }
+            else
+            {
+                Debug.LogWarning("[Flag] Grid system not available - flag detection may not work properly");
             }
         }
 
-        private async Task CheckForEntitiesAsync(CancellationToken cancellationToken)
+        private void OnEntityRegistered(Vector2Int pos, IGridEntity entity)
         {
-            while (!cancellationToken.IsCancellationRequested && isCheckingActive)
-            {
-                // Make sure we're running on the main thread for Unity operations
-                await Task.Delay(checkIntervalMs, cancellationToken);
-                
-                // Safety check in case the object was destroyed during the delay
-                if (this == null || !isActiveAndEnabled)
-                    return;
-                
-                CheckForEntitiesInRadius();
-            }
+            CheckEntityInRadius(entity);
         }
 
-        private void CheckForEntitiesInRadius()
+        private void OnEntityMoved(Vector2Int oldPos, Vector2Int newPos, IGridEntity entity)
         {
-            if (GridManager.Instance == null || GridManager.Instance.Grid == null)
-            {
-                if (debugLogging)
-                {
-                    Debug.LogWarning("[Flag] Grid system not available for entity detection");
-                }
+            CheckEntityInRadius(entity);
+        }
+
+        private void CheckEntityInRadius(IGridEntity entity)
+        {
+            // Skip if we've already processed this entity
+            if (processedEntities.Contains(entity))
                 return;
-            }
-
-            // Get all entities in radius
-            List<IGridEntity> entitiesInRadius = GridManager.Instance.Grid.GetEntitiesInRadius(transform.position, checkRadius);
-            
-            if (debugLogging && entitiesInRadius.Count > 0)
+                
+            // Skip if the entity is an enemy
+            if (entity.EntityType == EntityType.Ant)
+                return;
+                
+            // Skip if the entity is the flag itself
+            if (entity == this)
+                return;
+                
+            // Check if within radius
+            float distance = Vector3.Distance(transform.position, entity.WorldPosition);
+            if (distance <= checkRadius)
             {
-                Debug.Log($"[Flag] Found {entitiesInRadius.Count} entities in detection radius");
-            }
-            
-            foreach (IGridEntity entity in entitiesInRadius)
-            {
-                // Skip if we've already processed this entity
-                if (processedEntities.Contains(entity))
-                {
-                    continue;
-                }
-                
-                // Skip if the entity is an enemy
-                if (entity.EntityType == EntityType.Ant)
-                {
-                    continue;
-                }
-                
-                // Skip if the entity is the flag itself
-                if (entity == this)
-                {
-                    continue;
-                }
-                
                 // Get the GameObject from the entity
                 GameObject entityObject = null;
                 if (entity is GridEntity gridEntity)
@@ -133,7 +86,7 @@ namespace TacticalGame.Units
                         
                         if (debugLogging)
                         {
-                            Debug.Log($"[Flag] Unit reached flag via grid detection: {entityObject.name}, type: {entity.EntityType}");
+                            Debug.Log($"[Flag] Unit reached flag via grid event: {entityObject.name}, type: {entity.EntityType}");
                         }
                     }
                 }
@@ -142,26 +95,14 @@ namespace TacticalGame.Units
 
         protected override void OnDestroy()
         {
-            // Cancel the task when destroyed
-            StopGridCheck();
-            base.OnDestroy();
-        }
-
-        private void OnDisable()
-        {
-            // Cancel the task when disabled
-            StopGridCheck();
-        }
-
-        private void StopGridCheck()
-        {
-            isCheckingActive = false;
-            if (cancellationTokenSource != null)
+            // Unsubscribe from grid events
+            if (GridManager.Instance?.Grid != null)
             {
-                cancellationTokenSource.Cancel();
-                cancellationTokenSource.Dispose();
-                cancellationTokenSource = null;
+                GridManager.Instance.Grid.OnEntityRegistered -= OnEntityRegistered;
+                GridManager.Instance.Grid.OnEntityMoved -= OnEntityMoved;
             }
+            
+            base.OnDestroy();
         }
         
         #if UNITY_EDITOR

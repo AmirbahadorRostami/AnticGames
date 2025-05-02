@@ -1,7 +1,4 @@
 using UnityEngine;
-using System.Collections;
-using System.Threading;
-using System.Threading.Tasks;
 using TacticalGame.ScriptableObjects;
 using TacticalGame.Units;
 using TacticalGame.Events;
@@ -9,7 +6,7 @@ using TacticalGame.Events;
 namespace TacticalGame.Game
 {
     /// <summary>
-    /// Handles spawning units during gameplay using async/await instead of coroutines.
+    /// Handles spawning units during gameplay using frame-based timing instead of async/await.
     /// </summary>
     public class UnitSpawner : MonoBehaviour
     {
@@ -23,7 +20,7 @@ namespace TacticalGame.Game
 
         private bool isSpawning = false;
         private GameEventManager eventManager;
-        private CancellationTokenSource cancellationTokenSource;
+        private float nextSpawnTime = 0f;
 
         private void Start()
         {
@@ -38,6 +35,19 @@ namespace TacticalGame.Game
             }
         }
 
+        private void Update()
+        {
+            // Frame-based spawn timing instead of coroutine or task delay
+            if (isSpawning && Time.time >= nextSpawnTime)
+            {
+                SpawnRandomUnit();
+                
+                // Calculate next spawn time based on game config and difficulty
+                float spawnRate = gameConfig.GetActualSpawnRate();
+                nextSpawnTime = Time.time + spawnRate;
+            }
+        }
+
         private void OnDestroy()
         {
             if (eventManager != null)
@@ -47,9 +57,6 @@ namespace TacticalGame.Game
                 eventManager.OnGameResume -= ResumeSpawning;
                 eventManager.OnGameOver -= StopSpawning;
             }
-
-            // Make sure to cancel any running task when the object is destroyed
-            CancelSpawning();
         }
 
         private void StartSpawning()
@@ -57,18 +64,15 @@ namespace TacticalGame.Game
             if (!isSpawning)
             {
                 isSpawning = true;
-
-                // Create a new cancellation token source
-                cancellationTokenSource = new CancellationTokenSource();
-
-                // Start the spawn task
-                _ = SpawnRoutineAsync(cancellationTokenSource.Token);
+                nextSpawnTime = Time.time; // Spawn the first unit immediately
+                Debug.Log("[UnitSpawner] Started spawning");
             }
         }
 
         private void PauseSpawning()
         {
             isSpawning = false;
+            Debug.Log("[UnitSpawner] Paused spawning");
         }
 
         private void ResumeSpawning()
@@ -76,87 +80,15 @@ namespace TacticalGame.Game
             if (!isSpawning)
             {
                 isSpawning = true;
-
-                // Create a new cancellation token source
-                cancellationTokenSource = new CancellationTokenSource();
-
-                // Start the spawn task
-                _ = SpawnRoutineAsync(cancellationTokenSource.Token);
+                nextSpawnTime = Time.time; // Spawn the next unit immediately on resume
+                Debug.Log("[UnitSpawner] Resumed spawning");
             }
         }
 
         private void StopSpawning(bool isWin)
         {
-            CancelSpawning();
             isSpawning = false;
-        }
-
-        private void CancelSpawning()
-        {
-            // Cancel the current task if it's running
-            if (cancellationTokenSource != null && !cancellationTokenSource.IsCancellationRequested)
-            {
-                cancellationTokenSource.Cancel();
-                cancellationTokenSource.Dispose();
-                cancellationTokenSource = null;
-            }
-        }
-
-        /// <summary>
-        /// Creates a task that completes after the specified delay, while remaining on the main thread.
-        /// </summary>
-        private Task DelayOnMainThread(float seconds, CancellationToken cancellationToken)
-        {
-            TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
-
-            // Use Unity's own timing system instead of Task.Delay
-            StartCoroutine(DelayCoroutine(seconds, tcs, cancellationToken));
-
-            return tcs.Task;
-        }
-
-        private IEnumerator DelayCoroutine(float seconds, TaskCompletionSource<bool> tcs, CancellationToken cancellationToken)
-        {
-            yield return new WaitForSeconds(seconds);
-
-            if (cancellationToken.IsCancellationRequested)
-            {
-                tcs.SetCanceled();
-            }
-            else
-            {
-                tcs.SetResult(true);
-            }
-        }
-
-        private async Task SpawnRoutineAsync(CancellationToken cancellationToken)
-        {
-            try
-            {
-                while (isSpawning && !cancellationToken.IsCancellationRequested)
-                {
-                    // Get actual spawn rate based on difficulty
-                    float spawnRate = gameConfig.GetActualSpawnRate();
-
-                    // Wait for the spawn interval using our custom delay that stays on the main thread
-                    await DelayOnMainThread(spawnRate, cancellationToken);
-
-                    // After the delay, we need to check if we're still spawning and not cancelled
-                    if (isSpawning && !cancellationToken.IsCancellationRequested)
-                    {
-                        SpawnRandomUnit();
-                    }
-                }
-            }
-            catch (TaskCanceledException)
-            {
-                // Task was canceled, nothing to do here
-                Debug.Log("Spawning task was canceled");
-            }
-            catch (System.Exception ex)
-            {
-                Debug.LogError($"Error in spawning task: {ex.Message}");
-            }
+            Debug.Log("[UnitSpawner] Stopped spawning");
         }
 
         private void SpawnRandomUnit()
