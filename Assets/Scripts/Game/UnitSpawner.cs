@@ -37,6 +37,7 @@ namespace TacticalGame.Game
                 eventManager.OnGamePause += PauseSpawning;
                 eventManager.OnGameResume += ResumeSpawning;
                 eventManager.OnGameOver += StopSpawning;
+                eventManager.OnDifficultyChanged += OnDifficultyChanged;
             }
             flagPosition = flagTransform.position;
         }
@@ -62,6 +63,7 @@ namespace TacticalGame.Game
                 eventManager.OnGamePause -= PauseSpawning;
                 eventManager.OnGameResume -= ResumeSpawning;
                 eventManager.OnGameOver -= StopSpawning;
+                eventManager.OnDifficultyChanged -= OnDifficultyChanged;
             }
         }
 
@@ -70,7 +72,7 @@ namespace TacticalGame.Game
             if (!isSpawning)
             {
                 isSpawning = true;
-                nextSpawnTime = Time.time; // Spawn the first unit immediately
+                UpdateSpawnRate();
                 Debug.Log("[UnitSpawner] Started spawning");
             }
         }
@@ -86,7 +88,7 @@ namespace TacticalGame.Game
             if (!isSpawning)
             {
                 isSpawning = true;
-                nextSpawnTime = Time.time; // Spawn the next unit immediately on resume
+                UpdateSpawnRate();
                 Debug.Log("[UnitSpawner] Resumed spawning");
             }
         }
@@ -125,7 +127,25 @@ namespace TacticalGame.Game
             randomZ = Mathf.Sin(randomAngle * Mathf.Deg2Rad) * randomDistance;
             return new Vector3(flagPosition.x + randomX, flagPosition.y + spawnHeightOffset, flagPosition.z + randomZ);;
         }
-
+        
+        private void OnDifficultyChanged(int newDifficulty)
+        {
+            // Immediately adjust spawn timing when difficulty changes
+            if (isSpawning)
+            {
+                // Recalculate next spawn time based on updated difficulty
+                UpdateSpawnRate();
+                Debug.Log($"UnitSpawner: Adjusted for difficulty {newDifficulty}");
+            }
+        }
+        
+        private void UpdateSpawnRate()
+        {
+            float spawnRate = gameConfig.GetActualSpawnRate();
+            nextSpawnTime = Mathf.Min(nextSpawnTime, Time.time + spawnRate * 0.5f);
+            Debug.Log($"UnitSpawner: new spawn rate: {spawnRate}");
+        }
+        
         private void OnDrawGizmos()
         {
             if (!showSpawnPoints || flagTransform == null || gameConfig == null)

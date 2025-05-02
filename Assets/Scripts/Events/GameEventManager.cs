@@ -17,7 +17,7 @@ namespace TacticalGame.Events
         public event Action OnGameResume;
         public event Action<bool> OnGameOver;  // Parameter: true = win, false = lose
         public event Action<int> OnDifficultyChanged;
-        
+        public event Action OnGameConfigUpdated;
         
         // Unit events
         public event Action<GameObject> OnUnitSpawned;
@@ -101,6 +101,12 @@ namespace TacticalGame.Events
         public void DifficultyChanged(int newDifficultyValue)
         {
             OnDifficultyChanged?.Invoke(newDifficultyValue);
+            Debug.Log($"GameEventManager: Difficulty changed to {newDifficultyValue}");
+        }
+        
+        public void GameConfigUpdated()
+        {
+            OnGameConfigUpdated?.Invoke();
         }
     }
 }

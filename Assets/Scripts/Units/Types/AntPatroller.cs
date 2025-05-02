@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using TacticalGame.Grid;
+using TacticalGame.ScriptableObjects;
 
 namespace TacticalGame.Units.Types
 {
@@ -19,26 +20,26 @@ namespace TacticalGame.Units.Types
         private Vector3 patrolPoint;
         private bool isPatrolling = true;
         private float nextSearchTime = 0f;
+        private float baseSearchRadius;
+        private float baseAttackDamage;
+        private GameConfig gameConfig;
 
         protected override void Start()
         {
             base.Start();
-
-            // Set initial patrol point at flag
+            
+            gameConfig = gameManager.GetGameConfig(); // Add a getter method to GameManager
+            baseSearchRadius = searchRadius;
+            baseAttackDamage = attackDamage;
             if (targetTransform != null)
             {
                 SetRandomPatrolPoint();
             }
-
-            // Start moving
             StartMoving();
-            
-            // Subscribe to grid entity events for more efficient detection
             if (GridManager.Instance?.Grid != null)
             {
                 GridManager.Instance.Grid.OnEntityRegistered += OnEntityRegistered;
                 GridManager.Instance.Grid.OnEntityMoved += OnEntityMoved;
-                
                 Debug.Log("Ant: Subscribed to grid events");
             }
         }
@@ -124,6 +125,31 @@ namespace TacticalGame.Units.Types
                     SetRandomPatrolPoint();
                     isPatrolling = true;
                 }
+            }
+        }
+        
+        protected override void OnDifficultyChanged(int newDifficulty)
+        {
+            // Update search and attack parameters based on difficulty
+            // Higher difficulty = larger search radius, more damage
+            if (gameConfig != null)
+            {
+                float difficultyFactor = newDifficulty / 3f; // Normalize to 0.33 - 1.67
+        
+                // Adjust search radius
+                searchRadius = baseSearchRadius * Mathf.Lerp(0.8f, 1.2f, difficultyFactor);
+        
+                // Adjust attack damage
+                attackDamage = baseAttackDamage * Mathf.Lerp(0.8f, 1.3f, difficultyFactor);
+        
+                // Adjust movement speed through the movement strategy
+                float speedAdjustment = Mathf.Lerp(0.8f, 1.3f, difficultyFactor);
+                if (movementStrategy != null)
+                {
+                    movementStrategy.SetSpeed(unitConfig.moveSpeed * speedAdjustment);
+                }
+        
+                Debug.Log($"AntPatroller: Adjusted for difficulty {newDifficulty}");
             }
         }
 

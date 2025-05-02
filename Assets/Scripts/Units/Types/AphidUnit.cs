@@ -17,12 +17,13 @@ namespace TacticalGame.Units.Types
         private bool isStopped = false;
         private float originalSpeed;
         private Coroutine stopRoutine;
-
+        private float baseStopProbability;
+        
         protected override void Start()
         {
             base.Start();
             originalSpeed = unitConfig.moveSpeed;
-            
+            baseStopProbability = stopProbability;
             // Start checking for random stops
             StartCoroutine(RandomStopCheck());
         }
@@ -73,6 +74,12 @@ namespace TacticalGame.Units.Types
             // Return to normal speed after burst
             yield return new WaitForSeconds(1.0f);
             SetSpeed(originalSpeed);
+        }
+        
+        protected override void OnDifficultyChanged(int newDifficulty)
+        {
+            base.OnDifficultyChanged(newDifficulty);
+            stopProbability = baseStopProbability * Mathf.Lerp(0.8f, 1.2f, difficultyFactor);
         }
     }
 }

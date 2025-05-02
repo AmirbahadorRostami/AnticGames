@@ -23,9 +23,8 @@ namespace TacticalGame.Game
         private bool gameActive = false;
         
         public static GameManager Instance { get; private set; }
-
-        public static Transform FlagTransform { get; private set; }
-
+        public Transform FlagTransform { get; private set; }
+        
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -35,13 +34,11 @@ namespace TacticalGame.Game
             }
             
             Instance = this;
-
-
+            
             if(flagTransform != null)
             {
                 FlagTransform = flagTransform;
             }
-
         }
         
         private void Start()
@@ -52,6 +49,7 @@ namespace TacticalGame.Game
             {
                 eventManager.OnUnitDestroyed += HandleUnitDestroyed;
                 eventManager.OnUnitReachedFlag += HandleUnitReachedFlag;
+                eventManager.OnDifficultyChanged += OnDifficultyChanged;
             }
             
             gameActive = false;
@@ -63,6 +61,7 @@ namespace TacticalGame.Game
             {
                 eventManager.OnUnitDestroyed -= HandleUnitDestroyed;
                 eventManager.OnUnitReachedFlag -= HandleUnitReachedFlag;
+                eventManager.OnDifficultyChanged -= OnDifficultyChanged;
             }
         }
         
@@ -115,6 +114,21 @@ namespace TacticalGame.Game
             Debug.Log(isWin ? "Game Over: Player Won!" : "Game Over: Player Lost!");
         }
         
+        private void OnDifficultyChanged(int newDifficulty)
+        {
+            // Adjust win conditions based on difficulty
+            if (gameConfig != null)
+            {
+                // Example: Update UI to reflect new win conditions
+                if (eventManager != null)
+                {
+                    eventManager.GameConfigUpdated();
+                }
+        
+                Debug.Log($"GameManager: Game settings updated for difficulty {newDifficulty}");
+            }
+        }
+        
         /// <summary>
         /// Start the game.
         /// </summary>
@@ -138,9 +152,10 @@ namespace TacticalGame.Game
         /// </summary>
         public void PauseGame()
         {
-            if (!gameActive)
+            if (gameActive)
                 return;
-                
+
+            gameActive = false;
             if (eventManager != null)
                 eventManager.GamePause();
                 
@@ -154,19 +169,18 @@ namespace TacticalGame.Game
         {
             if (!gameActive)
                 return;
-                
+
+            gameActive = true;
             if (eventManager != null)
                 eventManager.GameResume();
                 
             Debug.Log("Game Resumed!");
         }
-
-
+        
         public void QuitGame()
         {
             Application.Quit();
         }
-
         
         /// <summary>
         /// Get the current score.
@@ -183,11 +197,15 @@ namespace TacticalGame.Game
         {
             return gameActive;
         }
-
-
+        
         public void SetMuteAudio(bool state)
         {
             audioSource.mute = state;
+        }
+        
+        public GameConfig GetGameConfig()
+        {
+            return gameConfig;
         }
 
     }

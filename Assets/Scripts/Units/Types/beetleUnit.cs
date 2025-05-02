@@ -13,11 +13,12 @@ namespace TacticalGame.Units.Types
         private Vector3 lastMoveDirection;
         private float randomDirectionTimer;
         private float randomDirectionInterval = 2f; // How often to recalculate random direction
-
+        private float basePathDirectness;
         protected override void Start()
         {
             base.Start();
             lastMoveDirection = (targetTransform.position - transform.position).normalized;
+            basePathDirectness = pathDirectness;
         }
 
         protected override void InitializeMovement()
@@ -79,6 +80,12 @@ namespace TacticalGame.Units.Types
                 // Save last direction
                 lastMoveDirection = blendedDirection;
             }
+        }
+        
+        protected override void OnDifficultyChanged(int newDifficulty)
+        {
+            base.OnDifficultyChanged(newDifficulty);
+            pathDirectness = basePathDirectness * Mathf.Lerp(0.9f, 1.1f, difficultyFactor);
         }
 
         // Ants have a simple death animation

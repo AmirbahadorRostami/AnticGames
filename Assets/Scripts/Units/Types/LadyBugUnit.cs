@@ -17,6 +17,7 @@ namespace TacticalGame.Units.Types
         private float hoverOffset;
         private Vector3 basePosition;
         private float zigzagOffset;
+        private float baseZigzagAmplitude;
 
         protected override void Start()
         {
@@ -25,7 +26,7 @@ namespace TacticalGame.Units.Types
             // Initialize random offsets for unique flight patterns
             hoverOffset = Random.Range(0f, 2f * Mathf.PI);
             zigzagOffset = Random.Range(0f, 2f * Mathf.PI);
-            
+            baseZigzagAmplitude = zigzagAmplitude;
             // Start hover animation
             StartCoroutine(HoverAnimation());
         }
@@ -115,6 +116,12 @@ namespace TacticalGame.Units.Types
                 
                 yield return null;
             }
+        }
+        
+        protected override void OnDifficultyChanged(int newDifficulty)
+        {
+            base.OnDifficultyChanged(newDifficulty);
+            zigzagAmplitude = baseZigzagAmplitude * Mathf.Lerp(0.8f, 1.3f, difficultyFactor);
         }
     }
 }

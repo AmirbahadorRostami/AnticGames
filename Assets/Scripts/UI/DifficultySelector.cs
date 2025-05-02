@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -10,23 +11,31 @@ namespace TacticalGame.UI
     /// </summary>
     public class DifficultySelector : MonoBehaviour
     {
+        [Header("References")]
+        [SerializeField] private UIManager uiManager;
+        
         [Header("UI Elements")]
         [SerializeField] private Button easyButton;
         [SerializeField] private Button mediumButton;
         [SerializeField] private Button hardButton;
         [SerializeField] private Button cycleDifficultyButton;
         [SerializeField] private TextMeshProUGUI currentDifficultyText;
+        [SerializeField] private Button backButton;
         
         [Header("Button Colors")]
         [SerializeField] private Color selectedColor = new Color(0.2f, 0.8f, 0.2f);
         [SerializeField] private Color unselectedColor = Color.white;
 
         private DifficultyManager difficultyManager;
-        
-        private void Start()
+
+
+        private void Awake()
         {
             difficultyManager = DifficultyManager.Instance;
-            
+        }
+
+        private void OnEnable()
+        {
             // Set up button listeners
             if (easyButton != null)
                 easyButton.onClick.AddListener(() => SetDifficulty(DifficultyManager.DifficultyLevel.Easy));
@@ -40,11 +49,15 @@ namespace TacticalGame.UI
             if (cycleDifficultyButton != null)
                 cycleDifficultyButton.onClick.AddListener(CycleDifficulty);
             
+            if(backButton !=null)
+                backButton.onClick.AddListener(OnBackButtonClicked);
+            
+            
             // Update UI to match initial difficulty
             UpdateDifficultyUI();
         }
         
-        private void OnDestroy()
+        private void OnDisable()
         {
             // Remove button listeners
             if (easyButton != null)
@@ -99,21 +112,12 @@ namespace TacticalGame.UI
             {
                 currentDifficultyText.text = $"Difficulty: {currentLevel}";
             }
-            
-            // Update button colors
-            UpdateButtonState(easyButton, currentLevel == DifficultyManager.DifficultyLevel.Easy);
-            UpdateButtonState(mediumButton, currentLevel == DifficultyManager.DifficultyLevel.Medium);
-            UpdateButtonState(hardButton, currentLevel == DifficultyManager.DifficultyLevel.Hard);
         }
-        
-        private void UpdateButtonState(Button button, bool isSelected)
+
+        private void OnBackButtonClicked()
         {
-            if (button == null)
-                return;
-                
-            ColorBlock colors = button.colors;
-            colors.normalColor = isSelected ? selectedColor : unselectedColor;
-            button.colors = colors;
+            uiManager.ShowMainMenu();
         }
+
     }
 }
