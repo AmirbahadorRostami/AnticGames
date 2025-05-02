@@ -21,7 +21,12 @@ namespace TacticalGame.Game
         private bool isSpawning = false;
         private GameEventManager eventManager;
         private float nextSpawnTime = 0f;
-
+        private float randomAngle = 0f;
+        private float randomDistance = 0f;
+        private float randomX = 0f;
+        private float randomZ = 0f;
+        private Vector3 flagPosition; 
+        
         private void Start()
         {
             eventManager = GameEventManager.Instance;
@@ -33,6 +38,7 @@ namespace TacticalGame.Game
                 eventManager.OnGameResume += ResumeSpawning;
                 eventManager.OnGameOver += StopSpawning;
             }
+            flagPosition = flagTransform.position;
         }
 
         private void Update()
@@ -112,22 +118,12 @@ namespace TacticalGame.Game
         {
             if (flagTransform == null)
                 return Vector3.zero;
-
-            // Get random angle
-            float angle = Random.Range(0f, 360f);
-
-            // Get random distance
-            float distance = Random.Range(gameConfig.minSpawnDistance, gameConfig.maxSpawnDistance);
-
-            // Calculate position
-            float x = Mathf.Cos(angle * Mathf.Deg2Rad) * distance;
-            float z = Mathf.Sin(angle * Mathf.Deg2Rad) * distance;
-
-            // Create spawn position relative to flag
-            Vector3 flagPos = flagTransform.position;
-            Vector3 spawnPos = new Vector3(flagPos.x + x, flagPos.y + spawnHeightOffset, flagPos.z + z);
-
-            return spawnPos;
+            
+            randomAngle = Random.Range(0f, 360f);
+            randomDistance = Random.Range(gameConfig.minSpawnDistance, gameConfig.maxSpawnDistance);
+            randomX = Mathf.Cos(randomAngle * Mathf.Deg2Rad) * randomDistance;
+            randomZ = Mathf.Sin(randomAngle * Mathf.Deg2Rad) * randomDistance;
+            return new Vector3(flagPosition.x + randomX, flagPosition.y + spawnHeightOffset, flagPosition.z + randomZ);;
         }
 
         private void OnDrawGizmos()
