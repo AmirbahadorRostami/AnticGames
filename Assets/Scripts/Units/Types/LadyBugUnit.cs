@@ -82,6 +82,7 @@ namespace TacticalGame.Units.Types
 
         private IEnumerator HoverAroundFlag()
         {
+            // TODO Refactors: move out these variables into global 
             float radius = 2f;
             float speed = 1f;
             float startAngle = Random.Range(0f, 360f);

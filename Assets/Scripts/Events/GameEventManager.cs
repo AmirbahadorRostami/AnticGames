@@ -16,7 +16,9 @@ namespace TacticalGame.Events
         public event Action OnGamePause;
         public event Action OnGameResume;
         public event Action<bool> OnGameOver;  // Parameter: true = win, false = lose
-
+        public event Action<int> OnDifficultyChanged;
+        
+        
         // Unit events
         public event Action<GameObject> OnUnitSpawned;
         public event Action<GameObject> OnUnitDestroyed;
@@ -94,6 +96,11 @@ namespace TacticalGame.Events
         public void ScoreUpdated(int newScore)
         {
             OnScoreUpdated?.Invoke(newScore);
+        }
+        
+        public void DifficultyChanged(int newDifficultyValue)
+        {
+            OnDifficultyChanged?.Invoke(newDifficultyValue);
         }
     }
 }

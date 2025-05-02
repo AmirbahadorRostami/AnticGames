@@ -6,7 +6,7 @@ namespace TacticalGame.Game
     /// <summary>
     /// Spawns enemy units at runtime when the game starts.
     /// </summary>
-    public class EnemySpawner : MonoBehaviour
+    public class AntSpawner : MonoBehaviour
     {
         [Header("Ant Settings")]
         [SerializeField] private GameObject enemyPrefab;
@@ -30,12 +30,12 @@ namespace TacticalGame.Game
                 eventManager.OnGameStart += SpawnEnemy;
                 
                 if (debugLog)
-                    Debug.Log("[EnemySpawner] Registered with game start event");
+                    Debug.Log("[AntSpawner] Registered with game start event");
             }
             else
             {
                 if (debugLog)
-                    Debug.Log("[EnemySpawner] No event manager found, will spawn after delay");
+                    Debug.Log("[AntSpawner] No event manager found, will spawn after delay");
                     
                 // Fallback: spawn after delay
                 Invoke("SpawnEnemy", spawnDelay);
@@ -50,11 +50,11 @@ namespace TacticalGame.Game
                     flagTransform = flag.transform;
                     
                     if (debugLog)
-                        Debug.Log($"[EnemySpawner] Found flag at {flagTransform.position}");
+                        Debug.Log($"[AntSpawner] Found flag at {flagTransform.position}");
                 }
                 else
                 {
-                    Debug.LogError("[EnemySpawner] No flag found in scene!");
+                    Debug.LogError("[AntSpawner] No flag found in scene!");
                 }
             }
         }
@@ -90,7 +90,7 @@ namespace TacticalGame.Game
             enemy.name = "Ant";
             
             if (debugLog)
-                Debug.Log($"[EnemySpawner] Ant spawned at {spawnPosition} (offset from flag)");
+                Debug.Log($"[AntSpawner] Ant spawned at {spawnPosition} (offset from flag)");
                 
             enemySpawned = true;
         }

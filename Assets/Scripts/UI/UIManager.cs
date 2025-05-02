@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using TacticalGame.Events;
 using TacticalGame.Game;
+using UnityEngine.Serialization;
 
 namespace TacticalGame.UI
 {
@@ -27,7 +28,10 @@ namespace TacticalGame.UI
         [SerializeField] private Button resumeButton;
         [SerializeField] private Button mainMenuButton;
         [SerializeField] private Button exitGameButton;
-        [SerializeField] private Button MusicButton;
+        [FormerlySerializedAs("MusicButton")] [SerializeField] private Button musicButton;
+        
+        [Header("Difficulty UI")]
+        [SerializeField] private DifficultySelector difficultySelector;
         
         private GameEventManager eventManager;
         private GameManager gameManager;
@@ -62,8 +66,8 @@ namespace TacticalGame.UI
             if (exitGameButton != null)
                 exitGameButton.onClick.AddListener(OnExitButtonClicked);
 
-            if (MusicButton != null)
-                MusicButton.onClick.AddListener(OnMusicButtonClicked);
+            if (musicButton != null)
+                musicButton.onClick.AddListener(OnMusicButtonClicked);
 
             // Initial UI state
             ShowMainMenu();
@@ -88,8 +92,8 @@ namespace TacticalGame.UI
             if (exitGameButton != null)
                 exitGameButton.onClick.RemoveListener(OnExitButtonClicked);
 
-            if (MusicButton != null)
-                MusicButton.onClick.RemoveListener(OnMusicButtonClicked);
+            if (musicButton != null)
+                musicButton.onClick.RemoveListener(OnMusicButtonClicked);
 
             // Unsubscribe from events
             if (eventManager != null)
@@ -120,12 +124,12 @@ namespace TacticalGame.UI
         
         private void ShowMainMenu()
         {
-            if (gameManager.IsGameActive())
-            {
-
-            }
-
             SetActivePanels(mainMenuPanel);
+            
+            if (difficultySelector != null)
+            {
+                difficultySelector.gameObject.SetActive(true);
+            }
         }
         
         private void ShowGameOverScreen(bool isWin)
@@ -162,6 +166,10 @@ namespace TacticalGame.UI
             if (gameManager != null)
             {
                 gameManager.StartGame();
+            }
+            if (difficultySelector != null)
+            {
+                difficultySelector.gameObject.SetActive(false);
             }
             SetActivePanels(topPanel);
         }
