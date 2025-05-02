@@ -2,223 +2,454 @@ using UnityEngine;
 using System.Collections.Generic;
 using TacticalGame.Grid;
 using TacticalGame.ScriptableObjects;
+using TacticalGame.Utilities;
 
 namespace TacticalGame.Units.Types
 {
     /// <summary>
-    /// Enemy unit that patrols and attacks using event-driven grid system
-    /// rather than periodic task-based searching.
+    /// Enemy unit that patrols and attacks using the grid system.
+    /// Prioritizes attacking units that are closest to the flag.
     /// </summary>
     public class AntPatroller : BaseUnit
     {
+        [Header("Search Settings")]
         [SerializeField] private float searchRadius = 10f;
         [SerializeField] private float attackRange = 1.5f;
         [SerializeField] private float attackDamage = 50f;
-        [SerializeField] private float searchInterval = 0.5f;  // Still use for fallback searches
+        [SerializeField] private float searchInterval = 1.0f;
+        [SerializeField] private float targetEvaluationCooldown = 0.5f;
+        
+        [Header("Optimization Settings")]
+        [SerializeField] private int maxPotentialTargets = 16; // Limit target evaluation
+        [SerializeField] private float distanceCheckOptimization = 0.2f; // Square this for distance checks
+        
+        [Header("Debug")]
+        [SerializeField] private bool showDebugInfo = false;
 
         private BaseUnit currentTarget;
         private Vector3 patrolPoint;
         private bool isPatrolling = true;
+        private bool isAttacking = false;
         private float nextSearchTime = 0f;
+        private float nextTargetEvaluationTime = 0f;
         private float baseSearchRadius;
         private float baseAttackDamage;
         private GameConfig gameConfig;
+        private Vector3 flagPosition;
+        private GridManager gridManager;
+        
+        // Pre-allocate collections to prevent GC allocations
+        private List<IGridEntity> potentialTargets;
+        
+        // Cache squared values for faster distance checks
+        private float searchRadiusSqr;
+        private float attackRangeSqr;
+        
+        // Cache transform to avoid GetComponent calls
+        private Transform cachedTransform;
+        
+        // Entity type cache for faster queries
+        private static readonly EntityType[] targetEntityTypes = { 
+            EntityType.Beetles, 
+            EntityType.Aphid, 
+            EntityType.Ladybug 
+        };
+        
+        // Optimization flags
+        private bool needsPathRecalculation = false;
 
         protected override void Start()
         {
             base.Start();
             
-            gameConfig = gameManager.GetGameConfig(); // Add a getter method to GameManager
+            // Cache references
+            gameConfig = gameManager?.GetGameConfig();
+            gridManager = GridManager.Instance;
+            cachedTransform = transform;
+            
+            // Store base values for difficulty scaling
             baseSearchRadius = searchRadius;
             baseAttackDamage = attackDamage;
+            
+            // Pre-compute squared distances for faster checks
+            searchRadiusSqr = searchRadius * searchRadius;
+            attackRangeSqr = attackRange * attackRange;
+            
+            // Initialize collections
+            potentialTargets = new List<IGridEntity>(maxPotentialTargets);
+            
+            // Get flag position
             if (targetTransform != null)
             {
+                flagPosition = targetTransform.position;
                 SetRandomPatrolPoint();
             }
+            
             StartMoving();
-            if (GridManager.Instance?.Grid != null)
+            
+            // Subscribe to grid events
+            if (gridManager?.Grid != null)
             {
-                GridManager.Instance.Grid.OnEntityRegistered += OnEntityRegistered;
-                GridManager.Instance.Grid.OnEntityMoved += OnEntityMoved;
-                Debug.Log("Ant: Subscribed to grid events");
+                gridManager.Grid.OnEntityRegistered += OnEntityRegistered;
+                gridManager.Grid.OnEntityMoved += OnEntityMoved;
+                gridManager.Grid.OnEntityUnregistered += OnEntityUnregistered;
             }
         }
 
         private void OnEntityRegistered(Vector2Int pos, IGridEntity entity)
         {
-            CheckPotentialTarget(entity);
+            // Fast early rejection
+            if (!IsValidTargetType(entity.EntityType))
+                return;
+                
+            // If we don't have a target yet, evaluate this entity
+            if (currentTarget == null)
+            {
+                EvaluateTarget(entity as BaseUnit);
+            }
+            // Otherwise check if this new entity is closer to the flag than current target
+            else if (entity is BaseUnit unit)
+            {
+                // Compare distances - use sqrMagnitude for performance
+                Vector3 currentTargetToFlag = currentTarget.transform.position - flagPosition;
+                Vector3 newUnitToFlag = unit.transform.position - flagPosition;
+                
+                if (newUnitToFlag.sqrMagnitude < currentTargetToFlag.sqrMagnitude)
+                {
+                    SetTargetUnit(unit);
+                }
+            }
         }
 
         private void OnEntityMoved(Vector2Int oldPos, Vector2Int newPos, IGridEntity entity)
         {
-            CheckPotentialTarget(entity);
-        }
-
-        private void CheckPotentialTarget(IGridEntity entity)
-        {
-            // Skip self and other enemies
-            if (entity is AntPatroller || entity == this)
-                return;
-                
-            // Skip flag
-            if (entity.EntityType == EntityType.Flag)
-                return;
-                
-            // Check if entity is a valid target unit
-            if (entity is BaseUnit unit)
+            // Quick check if it's our current target
+            if (currentTarget != null && entity == currentTarget)
             {
-                // Check if within search radius
-                float distance = Vector3.Distance(transform.position, entity.WorldPosition);
-                if (distance <= searchRadius)
-                {
-                    // Only switch targets if we don't have one or if this one is closer
-                    if (currentTarget == null)
-                    {
-                        SetTargetUnit(unit);
-                    }
-                    else
-                    {
-                        float currentDistance = Vector3.Distance(transform.position, currentTarget.transform.position);
-                        if (distance < currentDistance)
-                        {
-                            SetTargetUnit(unit);
-                        }
-                    }
-                }
+                // Mark for path recalculation on next frame
+                needsPathRecalculation = true;
+                
+                // Don't waste CPU checking attack range - will be done in Update
+            }
+            // Only consider if we have no target and it's a valid type
+            else if (currentTarget == null && IsValidTargetType(entity.EntityType))
+            {
+                EvaluateTarget(entity as BaseUnit);
+            }
+        }
+        
+        private void OnEntityUnregistered(Vector2Int pos, IGridEntity entity)
+        {
+            // If our target was unregistered, clear it
+            if (currentTarget != null && entity == currentTarget)
+            {
+                currentTarget = null;
+                isAttacking = false;
+                SetRandomPatrolPoint();
+                isPatrolling = true;
             }
         }
 
         protected override void Update()
         {
+            
             base.Update();
 
-            // Fallback search when using the grid events isn't sufficient
+            // Handle path recalculation if needed (deferred from event)
+            if (needsPathRecalculation && currentTarget != null)
+            {
+                SetTarget(currentTarget.transform.position);
+                CheckAttackRange();
+                needsPathRecalculation = false;
+            }
+
+            // Periodically search for better targets
+            if (Time.time >= nextTargetEvaluationTime)
+            {
+                EvaluateBetterTargets();
+                nextTargetEvaluationTime = Time.time + targetEvaluationCooldown;
+            }
+
+            // Fallback search when we don't have a target
             if (currentTarget == null && Time.time >= nextSearchTime)
             {
-                FallbackSearch();
+                GridBasedSearch();
                 nextSearchTime = Time.time + searchInterval;
             }
 
-            // Attack logic
-            if (currentTarget != null)
+            // Attack logic - optimized to check only when needed
+            if (currentTarget != null && isAttacking)
             {
-                float distance = Vector3.Distance(transform.position, currentTarget.transform.position);
-
-                if (distance <= attackRange)
-                {
-                    StopMoving();
-
-                    // Apply damage immediately for testing
-                    currentTarget.TakeDamage(attackDamage * Time.deltaTime);
-
-                    Debug.Log($"Ant: Attacking {currentTarget.name}");
-                }
-                else
-                {
-                    StartMoving();
-                }
-
-                // If target is destroyed or gone
-                if (!currentTarget.gameObject.activeInHierarchy)
-                {
-                    currentTarget = null;
-                    SetRandomPatrolPoint();
-                    isPatrolling = true;
-                }
+                // Apply damage
+                currentTarget.TakeDamage(attackDamage * Time.deltaTime);
             }
         }
         
-        protected override void OnDifficultyChanged(int newDifficulty)
+        // Quick check if an entity type is one we care about
+        private bool IsValidTargetType(EntityType type)
         {
-            // Update search and attack parameters based on difficulty
-            // Higher difficulty = larger search radius, more damage
-            if (gameConfig != null)
-            {
-                difficultyFactor = newDifficulty / 3f; // Normalize to 0.33 - 1.67
-        
-                // Adjust search radius
-                searchRadius = baseSearchRadius * Mathf.Lerp(0.8f, 1.2f, difficultyFactor);
-        
-                // Adjust attack damage
-                attackDamage = baseAttackDamage * Mathf.Lerp(0.8f, 1.3f, difficultyFactor);
-        
-                // Adjust movement speed through the movement strategy
-                float speedAdjustment = Mathf.Lerp(0.8f, 1.3f, difficultyFactor);
-                if (movementStrategy != null)
-                {
-                    movementStrategy.SetSpeed(unitConfig.moveSpeed * speedAdjustment);
-                }
-        
-                Debug.Log($"AntPatroller: Adjusted for difficulty {newDifficulty}");
-            }
+            return type == EntityType.Beetles || 
+                   type == EntityType.Aphid || 
+                   type == EntityType.Ladybug;
         }
-
-        private void FallbackSearch()
+        
+        private void GridBasedSearch()
         {
-            Debug.Log("Ant: Using fallback search");
-
-            // Direct find
-            BaseUnit[] allUnits = FindObjectsOfType<BaseUnit>();
-
-            foreach (BaseUnit unit in allUnits)
+            if (gridManager == null || !isAlive)
+                return;
+                
+            BaseUnit closestToFlag = null;
+            float closestDistanceToFlagSqr = float.MaxValue;
+            
+            // Process target types in priority order
+            foreach (var entityType in targetEntityTypes)
             {
-                // Skip self and other enemies
-                if (unit == this || unit is AntPatroller)
-                    continue;
-
-                float distance = Vector3.Distance(transform.position, unit.transform.position);
-                if (distance <= searchRadius)
+                var entities = gridManager.GetEntitiesOfTypeInRadius(cachedTransform.position, searchRadius, entityType);
+                
+                try
                 {
-                    SetTargetUnit(unit);
-                    return;
+                    foreach (var entity in entities)
+                    {
+                        if (entity is BaseUnit unit)
+                        {
+                            Vector3 toFlag = unit.transform.position - flagPosition;
+                            float distanceToFlagSqr = toFlag.sqrMagnitude;
+                            
+                            if (distanceToFlagSqr < closestDistanceToFlagSqr)
+                            {
+                                closestToFlag = unit;
+                                closestDistanceToFlagSqr = distanceToFlagSqr;
+                            }
+                        }
+                    }
                 }
+                finally
+                {
+                    entities.ReturnToPool();
+                }
+                
+                // Early stopping if we found a target
+                if (closestToFlag != null)
+                    break;
             }
-
-            // No target found, continue patrol
-            if (currentTarget == null && !isPatrolling)
+            
+            // Set the target to the unit closest to the flag
+            if (closestToFlag != null)
             {
+                SetTargetUnit(closestToFlag);
+            }
+            else if (!isPatrolling)
+            {
+                // If no target found and not patrolling, return to patrolling
                 SetRandomPatrolPoint();
                 isPatrolling = true;
                 StartMoving();
             }
         }
-
-        private void SetTargetUnit(BaseUnit target)
+        
+        private void EvaluateBetterTargets()
         {
-            currentTarget = target;
-            base.SetTarget(target.transform.position);
-            isPatrolling = false;
-            StartMoving();
-
-            Debug.Log($"Ant: Found target {target.name}");
+            if (currentTarget == null || gridManager == null || !isAlive)
+                return;
+                
+            Vector3 currentToFlag = currentTarget.transform.position - flagPosition;
+            float currentDistanceToFlagSqr = currentToFlag.sqrMagnitude;
+            
+            BaseUnit betterTarget = null;
+            float betterTargetDistanceSqr = currentDistanceToFlagSqr;
+            
+            // Clear and reuse the shared list
+            potentialTargets.Clear();
+            
+            // Optimization: Only check if something is in range before doing expensive queries
+            foreach (var entityType in targetEntityTypes)
+            {
+                // Fast check without creating lists
+                if (gridManager.AnyEntityOfTypeInRadius(cachedTransform.position, searchRadius, entityType))
+                {
+                    var entities = gridManager.GetEntitiesOfTypeInRadius(cachedTransform.position, searchRadius, entityType);
+                    try
+                    {
+                        // Only collect up to max capacity to avoid allocations
+                        foreach (var entity in entities)
+                        {
+                            if (potentialTargets.Count < maxPotentialTargets)
+                            {
+                                potentialTargets.Add(entity);
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    finally
+                    {
+                        entities.ReturnToPool();
+                    }
+                }
+            }
+            
+            // Find the best target
+            foreach (var entity in potentialTargets)
+            {
+                if (entity == this || entity is AntPatroller)
+                    continue;
+                    
+                if (entity is BaseUnit unit)
+                {
+                    Vector3 unitToFlag = unit.transform.position - flagPosition;
+                    float distanceToFlagSqr = unitToFlag.sqrMagnitude;
+                    
+                    if (distanceToFlagSqr < betterTargetDistanceSqr)
+                    {
+                        betterTarget = unit;
+                        betterTargetDistanceSqr = distanceToFlagSqr;
+                    }
+                }
+            }
+            
+            // Switch to better target if found
+            if (betterTarget != null && betterTarget != currentTarget)
+            {
+                SetTargetUnit(betterTarget);
+            }
         }
 
+        /// <summary>
+        /// Simplified target evaluation that uses squared distance.
+        /// </summary>
+        private void EvaluateTarget(BaseUnit unit)
+        {
+            if (unit == null)
+                return;
+                
+            Vector3 toUnit = unit.transform.position - cachedTransform.position;
+            float distanceToUnitSqr = toUnit.sqrMagnitude;
+            
+            if (distanceToUnitSqr <= searchRadiusSqr)
+            {
+                if (currentTarget == null)
+                {
+                    SetTargetUnit(unit);
+                }
+                else
+                {
+                    // Compare square distances
+                    Vector3 currentToFlag = currentTarget.transform.position - flagPosition;
+                    Vector3 newToFlag = unit.transform.position - flagPosition;
+                    
+                    if (newToFlag.sqrMagnitude < currentToFlag.sqrMagnitude)
+                    {
+                        SetTargetUnit(unit);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Set target and start pursuit with minimal allocation.
+        /// </summary>
+        private void SetTargetUnit(BaseUnit target)
+        {
+            if (target == null || target == currentTarget)
+                return;
+                
+            currentTarget = target;
+            isPatrolling = false;
+            isAttacking = false;
+            
+            // Set movement target
+            SetTarget(target.transform.position);
+            StartMoving();
+            
+            // Check if already in attack range
+            CheckAttackRange();
+        }
+
+        /// <summary>
+        /// Check attack range using squared distance.
+        /// </summary>
+        private void CheckAttackRange()
+        {
+            if (currentTarget == null)
+                return;
+                
+            Vector3 toTarget = currentTarget.transform.position - cachedTransform.position;
+            float distanceSqr = toTarget.sqrMagnitude;
+            
+            if (distanceSqr <= attackRangeSqr)
+            {
+                // Stop and attack
+                StopMoving();
+                isAttacking = true;
+            }
+            else if (isAttacking)
+            {
+                // Resume chasing
+                isAttacking = false;
+                StartMoving();
+            }
+        }
+
+        /// <summary>
+        /// Set random patrol point with minimal allocation.
+        /// </summary>
         private void SetRandomPatrolPoint()
         {
             if (targetTransform == null)
                 return;
 
-            // Get random point around flag
-            Vector2 randomCircle = Random.insideUnitCircle * 5f;
-            Vector3 randomPoint = targetTransform.position + new Vector3(randomCircle.x, 0, randomCircle.y);
+            // Reuse patrolPoint to avoid allocation
+            patrolPoint.x = flagPosition.x + Random.Range(-5f, 5f);
+            patrolPoint.z = flagPosition.z + Random.Range(-5f, 5f);
+            patrolPoint.y = flagPosition.y;
 
-            // Use the Vector3 overload of SetTarget
-            base.SetTarget(randomPoint);
-
-            // Store patrol point for reference
-            patrolPoint = randomPoint;
-
-            Debug.Log($"Ant: New patrol point at {randomPoint}");
+            // Set target to the random point
+            SetTarget(patrolPoint);
+        }
+        
+        /// <summary>
+        /// Update parameter caches when difficulty changes.
+        /// </summary>
+        protected override void OnDifficultyChanged(int newDifficulty)
+        {
+            if (gameConfig != null)
+            {
+                float difficultyFactor = newDifficulty / 3f;
+        
+                // Update parameters
+                searchRadius = baseSearchRadius * Mathf.Lerp(0.8f, 1.2f, difficultyFactor);
+                attackDamage = baseAttackDamage * Mathf.Lerp(0.8f, 1.3f, difficultyFactor);
+                
+                // Recalculate squared values
+                searchRadiusSqr = searchRadius * searchRadius;
+                attackRangeSqr = attackRange * attackRange;
+                
+                // Update movement speed
+                if (movementStrategy != null)
+                {
+                    movementStrategy.SetSpeed(unitConfig.moveSpeed * Mathf.Lerp(0.8f, 1.3f, difficultyFactor));
+                }
+            }
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
             // Unsubscribe from grid events
-            if (GridManager.Instance?.Grid != null)
+            if (gridManager?.Grid != null)
             {
-                GridManager.Instance.Grid.OnEntityRegistered -= OnEntityRegistered;
-                GridManager.Instance.Grid.OnEntityMoved -= OnEntityMoved;
+                gridManager.Grid.OnEntityRegistered -= OnEntityRegistered;
+                gridManager.Grid.OnEntityMoved -= OnEntityMoved;
+                gridManager.Grid.OnEntityUnregistered -= OnEntityUnregistered;
             }
+            
+            // Clear references to avoid memory leaks
+            currentTarget = null;
+            potentialTargets.Clear();
+            potentialTargets = null;
+            
+            base.OnDestroy();
         }
     }
 }

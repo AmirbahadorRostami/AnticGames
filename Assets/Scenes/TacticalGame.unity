@@ -2146,6 +2146,8 @@ MonoBehaviour:
   worldOffset: {x: -50, y: -50}
   showDebugVisuals: 1
   debugLineColor: {r: 1, g: 0, b: 0, a: 1}
+  showGridStats: 0
+  statsUpdateInterval: 2
 --- !u!4 &846541293
 Transform:
   m_ObjectHideFlags: 0
@@ -3187,6 +3189,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entityType: 4
+  updateThreshold: 0.01
   checkRadius: 1
   debugLogging: 1
 --- !u!23 &1591831273
