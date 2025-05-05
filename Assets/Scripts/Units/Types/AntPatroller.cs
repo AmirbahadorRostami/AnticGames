@@ -62,75 +62,32 @@ namespace TacticalGame.Units.Types
         {
             base.Start();
             
-            // Cache references
             gameConfig = gameManager?.GetGameConfig();
             gridManager = GridManager.Instance;
             cachedTransform = transform;
-            
-            // Store base values for difficulty scaling
             baseSearchRadius = searchRadius;
             baseAttackDamage = attackDamage;
-            
-            // Pre-compute squared distances for faster checks
             searchRadiusSqr = searchRadius * searchRadius;
             attackRangeSqr = attackRange * attackRange;
-            
-            // Initialize collections
             potentialTargets = new List<IGridEntity>(maxPotentialTargets);
-            
-            // Get flag position
             if (targetTransform != null)
             {
                 flagPosition = targetTransform.position;
                 SetRandomPatrolPoint();
             }
-            
             StartMoving();
-            
-            // Subscribe to grid events
             if (gridManager?.Grid != null)
             {
                 gridManager.Grid.OnEntityRegistered += OnEntityRegistered;
                 gridManager.Grid.OnEntityMoved += OnEntityMoved;
                 gridManager.Grid.OnEntityUnregistered += OnEntityUnregistered;
             }
-            
             if (eventManager != null)
             {
                 eventManager.AntPatrollerSpawned(this);
             }
         }
         
-        
-        public void SetPlayerSelectedTarget(BaseUnit target)
-        {
-            if (target == null || target == this)
-                return;
-        
-            // Only target valid unit types
-            if (!IsValidTargetType(target.EntityType))
-                return;
-        
-            // Set as current target with priority over automatic targeting
-            currentTarget = target;
-            isPatrolling = false;
-            isAttacking = false;
-    
-            // Start pursuit
-            SetTarget(target.transform.position);
-            StartMoving();
-    
-            // Check if already in attack range
-            CheckAttackRange();
-    
-            if (eventManager != null)
-            {
-                // Notify about targeting
-                eventManager.EnemyTargetingUnit(gameObject, target.gameObject);
-            }
-            
-        }
-
         private void OnEntityRegistered(Vector2Int pos, IGridEntity entity)
         {
             // Fast early rejection
@@ -231,6 +188,35 @@ namespace TacticalGame.Units.Types
             {
                 currentTarget = null;
             }
+        }
+        
+        public void SetPlayerSelectedTarget(BaseUnit target)
+        {
+            if (target == null || target == this)
+                return;
+        
+            // Only target valid unit types
+            if (!IsValidTargetType(target.EntityType))
+                return;
+        
+            // Set as current target with priority over automatic targeting
+            currentTarget = target;
+            isPatrolling = false;
+            isAttacking = false;
+    
+            // Start pursuit
+            SetTarget(target.transform.position);
+            StartMoving();
+    
+            // Check if already in attack range
+            CheckAttackRange();
+    
+            if (eventManager != null)
+            {
+                // Notify about targeting
+                eventManager.EnemyTargetingUnit(gameObject, target.gameObject);
+            }
+            
         }
         
         // Quick check if an entity type is one we care about
@@ -413,6 +399,11 @@ namespace TacticalGame.Units.Types
             
             // Check if already in attack range
             CheckAttackRange();
+            
+            if (eventManager != null)
+            {
+                eventManager.EnemyTargetingUnit(gameObject, target.gameObject);
+            }
         }
 
         /// <summary>
