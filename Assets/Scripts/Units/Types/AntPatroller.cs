@@ -95,6 +95,35 @@ namespace TacticalGame.Units.Types
                 gridManager.Grid.OnEntityUnregistered += OnEntityUnregistered;
             }
         }
+        
+        
+        public void SetPlayerSelectedTarget(BaseUnit target)
+        {
+            if (target == null || target == this)
+                return;
+        
+            // Only target valid unit types
+            if (!IsValidTargetType(target.EntityType))
+                return;
+        
+            // Set as current target with priority over automatic targeting
+            currentTarget = target;
+            isPatrolling = false;
+            isAttacking = false;
+    
+            // Start pursuit
+            SetTarget(target.transform.position);
+            StartMoving();
+    
+            // Check if already in attack range
+            CheckAttackRange();
+    
+            if (eventManager != null)
+            {
+                // Notify about targeting
+                eventManager.EnemyTargetingUnit(gameObject, target.gameObject);
+            }
+        }
 
         private void OnEntityRegistered(Vector2Int pos, IGridEntity entity)
         {
@@ -182,6 +211,19 @@ namespace TacticalGame.Units.Types
             {
                 // Apply damage
                 currentTarget.TakeDamage(attackDamage * Time.deltaTime);
+            }
+            
+            // Only run automatic targeting if no player-selected target
+            if (currentTarget == null && Time.time >= nextSearchTime)
+            {
+                GridBasedSearch();
+                nextSearchTime = Time.time + searchInterval;
+            }
+
+            // Add this check to retain the player's selection if target is still valid
+            if (currentTarget != null && !currentTarget.isActiveAndEnabled)
+            {
+                currentTarget = null;
             }
         }
         

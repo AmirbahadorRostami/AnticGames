@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5629506476474859867}
   - component: {fileID: 2434631888946217440}
   - component: {fileID: 983699351008482543}
-  m_Layer: 6
+  m_Layer: 10
   m_Name: Ladybug
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -119,6 +119,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entityType: 2
+  updateThreshold: 0.01
   unitConfig: {fileID: 11400000, guid: f1bf63b01d4f640ab9e3e15000007c06, type: 2}
   meshRenderer: {fileID: 5629506476474859867}
   targetTransform: {fileID: 0}

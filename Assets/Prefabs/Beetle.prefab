@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5889386495350533731}
   - component: {fileID: 5016084310810277159}
   - component: {fileID: 4476502792542511300}
-  m_Layer: 6
+  m_Layer: 10
   m_Name: Beetle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -119,6 +119,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entityType: 0
+  updateThreshold: 0.01
   unitConfig: {fileID: 11400000, guid: 42f54ff0d41c74bbb9d23bed60e6b307, type: 2}
   meshRenderer: {fileID: 5889386495350533731}
   targetTransform: {fileID: 0}

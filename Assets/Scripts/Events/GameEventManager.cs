@@ -27,6 +27,8 @@ namespace TacticalGame.Events
         // Ant events
         public event Action<GameObject, GameObject> OnEnemyTargetingUnit;  // Parameters: enemy, target
         public event Action<GameObject> OnEnemyIdle;
+        public event Action<GameObject> OnUnitSelected;
+        public event Action<GameObject> OnUnitDeselected;
 
         // Score events
         public event Action<int> OnScoreUpdated;  // Parameter: new score
@@ -107,6 +109,16 @@ namespace TacticalGame.Events
         public void GameConfigUpdated()
         {
             OnGameConfigUpdated?.Invoke();
+        }
+        
+        public void UnitSelected(GameObject unit)
+        {
+            OnUnitSelected?.Invoke(unit);
+        }
+
+        public void UnitDeselected(GameObject unit)
+        {
+            OnUnitDeselected?.Invoke(unit);
         }
     }
 }

@@ -2062,6 +2062,8 @@ GameObject:
   - component: {fileID: 846541294}
   - component: {fileID: 846541295}
   - component: {fileID: 846541296}
+  - component: {fileID: 846541297}
+  - component: {fileID: 846541298}
   m_Layer: 0
   m_Name: GameManagers
   m_TagString: Untagged
@@ -2209,6 +2211,38 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameConfig: {fileID: 11400000, guid: e720c81cfd58645fabbc43b394476c2d, type: 2}
   currentDifficulty: 3
+--- !u!114 &846541297
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 846541287}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cae0874419a641668efa161cc5a17bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  selectionIndicatorPrefab: {fileID: 4310392118012568838, guid: 5cb35d0ef83604aaab14dcd0f681a699, type: 3}
+  hoverHeight: 0.2
+  poolSize: 5
+--- !u!114 &846541298
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 846541287}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2ccd1fc3c4ab4b688f3e48ba2904162, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unitLayerMask:
+    serializedVersion: 2
+    m_Bits: 1024
+  maxSelectionDistance: 100
+  mainCamera: {fileID: 1496821334}
 --- !u!1 &986881900
 GameObject:
   m_ObjectHideFlags: 0
