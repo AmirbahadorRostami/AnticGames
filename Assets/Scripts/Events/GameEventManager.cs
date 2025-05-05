@@ -1,4 +1,5 @@
 using System;
+using TacticalGame.Units.Types;
 using UnityEngine;
 
 namespace TacticalGame.Events
@@ -29,6 +30,7 @@ namespace TacticalGame.Events
         public event Action<GameObject> OnEnemyIdle;
         public event Action<GameObject> OnUnitSelected;
         public event Action<GameObject> OnUnitDeselected;
+        public event Action<AntPatroller> OnAntPatrollerSpawned;
 
         // Score events
         public event Action<int> OnScoreUpdated;  // Parameter: new score
@@ -87,6 +89,11 @@ namespace TacticalGame.Events
         public void EnemyTargetingUnit(GameObject enemy, GameObject target)
         {
             OnEnemyTargetingUnit?.Invoke(enemy, target);
+        }
+        
+        public void AntPatrollerSpawned(AntPatroller ant)
+        {
+            OnAntPatrollerSpawned?.Invoke(ant);
         }
 
         public void EnemyIdle(GameObject enemy)

@@ -25,19 +25,17 @@ namespace TacticalGame.Game
                 
             if (eventManager != null)
             {
-                eventManager.OnGameStart += FindAntPatroller;
                 eventManager.OnUnitDestroyed += HandleUnitDestroyed;
+                eventManager.OnAntPatrollerSpawned += HandleAntPatrollerSpawned;
             }
-            
-            FindAntPatroller();
         }
         
         private void OnDestroy()
         {
             if (eventManager != null)
             {
-                eventManager.OnGameStart -= FindAntPatroller;
                 eventManager.OnUnitDestroyed -= HandleUnitDestroyed;
+                eventManager.OnAntPatrollerSpawned -= HandleAntPatrollerSpawned;
             }
         }
         
@@ -93,34 +91,9 @@ namespace TacticalGame.Game
             }
         }
         
-        private void FindAntPatroller()
+        private void HandleAntPatrollerSpawned(AntPatroller ant)
         {
-            if (antUnit == null)
-            {
-                // First try finding by name
-                GameObject antObject = GameObject.Find("Ant");
-                
-                // If not found, try finding by type
-                if (antObject == null)
-                {
-                    AntPatroller[] antPatrollers = FindObjectsOfType<AntPatroller>();
-                    if (antPatrollers.Length > 0)
-                    {
-                        antUnit = antPatrollers[0];
-                        return;
-                    }
-                }
-                else
-                {
-                    antUnit = antObject.GetComponent<AntPatroller>();
-                }
-                
-                // Additional logging for debugging
-                if (antUnit == null)
-                {
-                    Debug.LogWarning("UnitTargetingSystem: Could not find AntPatroller in scene");
-                }
-            }
+            antUnit = ant;
         }
         
         private void HandleUnitDestroyed(GameObject unit)

@@ -94,6 +94,11 @@ namespace TacticalGame.Units.Types
                 gridManager.Grid.OnEntityMoved += OnEntityMoved;
                 gridManager.Grid.OnEntityUnregistered += OnEntityUnregistered;
             }
+            
+            if (eventManager != null)
+            {
+                eventManager.AntPatrollerSpawned(this);
+            }
         }
         
         
@@ -123,6 +128,7 @@ namespace TacticalGame.Units.Types
                 // Notify about targeting
                 eventManager.EnemyTargetingUnit(gameObject, target.gameObject);
             }
+            
         }
 
         private void OnEntityRegistered(Vector2Int pos, IGridEntity entity)
