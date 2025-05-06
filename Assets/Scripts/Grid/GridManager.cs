@@ -6,7 +6,6 @@ namespace TacticalGame.Grid
 {
     /// <summary>
     /// Manages the game's grid and provides centralized access to grid operations.
-    /// Optimized for performance and memory usage.
     /// </summary>
     public class GridManager : MonoBehaviour
     {
@@ -20,9 +19,7 @@ namespace TacticalGame.Grid
 
         public static GridManager Instance { get; private set; }
         public Grid<GridCell> Grid { get; private set; }
-        
-        // Cache for entity lookups to reduce dictionary lookups
-        private Dictionary<IGridEntity, GridEntity> trackedEntities = new Dictionary<IGridEntity, GridEntity>(128);
+        private readonly Dictionary<IGridEntity, GridEntity> trackedEntities = new Dictionary<IGridEntity, GridEntity>(128);
         
         // Performance monitoring
         private int entitiesRegistered = 0;
@@ -48,9 +45,7 @@ namespace TacticalGame.Grid
         private void InitializeGrid()
         {
             Grid = new Grid<GridCell>(cellSize, worldOffset);
-            
-            // Create cells for the entire grid - only if needed for your game
-            // For large grids, consider lazy initialization
+            //TODO: For large grids, better to consider lazy initialization
             CreateInitialCells();
             
             Debug.Log($"Grid initialized with dimensions {gridSize.x} x {gridSize.y} and cell size {cellSize}");

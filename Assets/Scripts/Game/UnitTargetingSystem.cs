@@ -51,13 +51,9 @@ namespace TacticalGame.Game
         private void HandleSelection()
         {
             Ray ray = mainCamera.ScreenPointToRay(UnityEngine.Input.mousePosition);
-            RaycastHit hit;
-            
-            if (Physics.Raycast(ray, out hit, maxSelectionDistance, unitLayerMask))
+            if (Physics.Raycast(ray, out var hit, maxSelectionDistance, unitLayerMask))
             {
-                // Try to get a BaseUnit component
                 BaseUnit unit = hit.collider.GetComponent<BaseUnit>();
-                
                 if (unit != null)
                 {
                     SelectUnit(unit);

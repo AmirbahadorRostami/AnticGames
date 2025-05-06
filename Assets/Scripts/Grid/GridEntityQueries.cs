@@ -98,55 +98,6 @@ namespace TacticalGame.Grid
         }
         
         /// <summary>
-        /// Get the nearest entity to a position that matches a predicate.
-        /// </summary>
-        public IGridEntity GetNearestEntity(Vector3 worldPosition, Predicate<IGridEntity> filter = null)
-        {
-            // Start with small radius and expand
-            float initialRadius = CellSize * 2;
-            float maxRadius = 50f;  // Maximum search radius
-            
-            IGridEntity nearest = null;
-            float nearestDistance = float.MaxValue;
-            
-            // Use expanding radius search for efficiency
-            for (float radius = initialRadius; radius <= maxRadius; radius *= 2)
-            {
-                var entities = GetEntitiesInRadius(worldPosition, radius);
-                bool foundAny = false;
-                
-                try
-                {
-                    foreach (var entity in entities)
-                    {
-                        if (filter != null && !filter(entity))
-                            continue;
-                            
-                        foundAny = true;
-                        float distance = Vector3.Distance(worldPosition, entity.WorldPosition);
-                        
-                        if (distance < nearestDistance)
-                        {
-                            nearestDistance = distance;
-                            nearest = entity;
-                        }
-                    }
-                }
-                finally
-                {
-                    // Return the list to the pool
-                    entities.ReturnToPool();
-                }
-                
-                // If we found entities at this radius, we can stop expanding
-                if (foundAny)
-                    break;
-            }
-            
-            return nearest;
-        }
-        
-        /// <summary>
         /// Get all entities of a specific type within a radius. Returns a pooled list that must be returned.
         /// </summary>
         public List<IGridEntity> GetEntitiesOfTypeInRadius(Vector3 worldPosition, float worldRadius, EntityType entityType)

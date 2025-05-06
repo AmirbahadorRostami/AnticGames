@@ -176,13 +176,6 @@ namespace TacticalGame.Units.Types
                 currentTarget.TakeDamage(attackDamage * Time.deltaTime);
             }
             
-            // Only run automatic targeting if no player-selected target
-            if (currentTarget == null && Time.time >= nextSearchTime)
-            {
-                GridBasedSearch();
-                nextSearchTime = Time.time + searchInterval;
-            }
-
             // Add this check to retain the player's selection if target is still valid
             if (currentTarget != null && !currentTarget.isActiveAndEnabled)
             {
@@ -218,8 +211,6 @@ namespace TacticalGame.Units.Types
             }
             
         }
-        
-        // Quick check if an entity type is one we care about
         private bool IsValidTargetType(EntityType type)
         {
             return type == EntityType.Beetles || 
@@ -432,7 +423,7 @@ namespace TacticalGame.Units.Types
         }
 
         /// <summary>
-        /// Set random patrol point with minimal allocation.
+        /// Set random patrol point.
         /// </summary>
         private void SetRandomPatrolPoint()
         {
@@ -455,17 +446,14 @@ namespace TacticalGame.Units.Types
         {
             if (gameConfig != null)
             {
-                float difficultyFactor = newDifficulty / 3f;
+                difficultyFactor = newDifficulty / 3f;
         
-                // Update parameters
                 searchRadius = baseSearchRadius * Mathf.Lerp(0.8f, 1.2f, difficultyFactor);
                 attackDamage = baseAttackDamage * Mathf.Lerp(0.8f, 1.3f, difficultyFactor);
                 
-                // Recalculate squared values
                 searchRadiusSqr = searchRadius * searchRadius;
                 attackRangeSqr = attackRange * attackRange;
                 
-                // Update movement speed
                 if (movementStrategy != null)
                 {
                     movementStrategy.SetSpeed(unitConfig.moveSpeed * Mathf.Lerp(0.8f, 1.3f, difficultyFactor));
@@ -475,7 +463,6 @@ namespace TacticalGame.Units.Types
 
         protected override void OnDestroy()
         {
-            // Unsubscribe from grid events
             if (gridManager?.Grid != null)
             {
                 gridManager.Grid.OnEntityRegistered -= OnEntityRegistered;
@@ -483,7 +470,6 @@ namespace TacticalGame.Units.Types
                 gridManager.Grid.OnEntityUnregistered -= OnEntityUnregistered;
             }
             
-            // Clear references to avoid memory leaks
             currentTarget = null;
             potentialTargets.Clear();
             potentialTargets = null;

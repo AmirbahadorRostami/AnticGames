@@ -5,7 +5,6 @@ namespace TacticalGame.Grid
     /// <summary>
     /// Base component for any entity that exists in the grid system.
     /// Handles registration with the grid and position updates.
-    /// Optimized for performance with minimal updates.
     /// </summary>
     public class GridEntity : MonoBehaviour, IGridEntity
     {

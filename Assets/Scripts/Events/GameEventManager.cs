@@ -6,7 +6,6 @@ namespace TacticalGame.Events
 {
     /// <summary>
     /// Centralized event system for game-wide communication.
-    /// Uses the observer pattern to decouple systems.
     /// </summary>
     public class GameEventManager : MonoBehaviour
     {
